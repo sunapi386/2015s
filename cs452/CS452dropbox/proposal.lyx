@@ -1,0 +1,132 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CS452 Project Proposal
+\end_layout
+
+\begin_layout Author
+Christophe Biocca (20322763) and Ronuk Raval (20345750)
+\end_layout
+
+\begin_layout Section
+Overview
+\end_layout
+
+\begin_layout Standard
+Trains are taxis, with fares regularly appearing along the track at random
+ locations, with a random destination (the user can also create fares on
+ demand).
+ The train that can get to the fare the fastest does so, stops at the pickup
+ location, and travels to and stops at the destination.
+ This is happening for multiple trains at once, ideally with support for
+ user specified fares.
+ Fares are also only valid for a limited time, so trains have to decide
+ whether to try and pick up the fare or not.
+\end_layout
+
+\begin_layout Section
+Technical Challenges
+\end_layout
+
+\begin_layout Itemize
+Multiple trains run on the track at once, some with specific destinations,
+ the others loitering in an area, waiting for a fare.
+ The trains that are transporting fares must be able to displace other trains
+ that are in its way.
+ This is difficult because it involves adding a notion of priority to the
+ reservation system, and because trains may be required by the reservation
+ system to leave the section of track they are on.
+\end_layout
+
+\begin_layout Itemize
+Taxi dispatch has to take into account the time taken for each train to
+ get to a location on the track, as well as the deadlines specified by the
+ fares.
+ This requires knowing about the position of all trains on the track, as
+ well as all possible reroutings that could take them to a target point
+ and the ETA for each.
+\end_layout
+
+\begin_layout Section
+Technical Solutions
+\end_layout
+
+\begin_layout Itemize
+We can represent the reservation system as a series of track reservations
+ with valid time intervals.
+ Trains can say they will need a track during a specific period in time,
+ with the implicit promise that they'll leave the section by the time that
+ reservation expires.
+ This way, loitering trains reserve the track on a just-in-time basis, while
+ transporting trains can go ahead and reserve their entire path immediately
+ (using the correct time intervals for each section).
+\end_layout
+
+\begin_layout Itemize
+Building on top of the previous system, if a reservation system knows which
+ tracks will be available and at which time, it becomes simple enough to
+ modify the pathing algorithm to take these into account when calculating
+ the ETA's for all available trains to get to a specific location.
+\end_layout
+
+\end_body
+\end_document
