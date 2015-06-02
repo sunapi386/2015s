@@ -1,0 +1,669 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CS486 Project Modeling
+\end_layout
+
+\begin_layout Author
+Jason Sun
+\end_layout
+
+\begin_layout Date
+June 2, 2015
+\end_layout
+
+\begin_layout Section
+Statement of Objective
+\end_layout
+
+\begin_layout Standard
+To freshen up our mind on what the problem we should be solving, we'll re-frame
+ the problem more consisely than the proposal.
+ 
+\end_layout
+
+\begin_layout Standard
+The purpose is to build a recommendation engine for Dota, we'll focus on
+ one objective: 
+\emph on
+hero selection recommendation
+\emph default
+.
+ In detail, a recommendation consists of the following factors:
+\end_layout
+
+\begin_layout Itemize
+return a listing of heroes that are picked often along side a given a set
+ of 1 to 4 heroes
+\end_layout
+
+\begin_layout Itemize
+return a listing of heroes that are banned often along side a given a set
+ of 1 to 4 heroes
+\end_layout
+
+\begin_layout Standard
+We now look at what kind of data we can perform analysis on.
+\end_layout
+
+\begin_layout Section
+Example Data 
+\end_layout
+
+\begin_layout Standard
+These examples represent the kind of data we can work off, acquired through
+ the game's API call
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+http://dev.dota2.com/showthread.php?t=47115
+\end_layout
+
+\end_inset
+
+.
+ To use these you need a Steam API key.
+ I post mine here.
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+API Key: BAD3D130F4D06DB91EB99C1009E4A8BD 
+\end_layout
+
+\begin_layout Standard
+I'll now show examples of what the API looks like, through weblinks.
+ They are available in XML and JSON formats.
+\end_layout
+
+\begin_layout Subsection*
+Match History
+\end_layout
+
+\begin_layout Standard
+This method serves the purpose of identifying a set of interesting 
+\family typewriter
+match_id
+\family default
+s.
+ You can see an example using my API key.
+ Formatting description
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+https://wiki.teamfortress.com/wiki/WebAPI/GetMatchHistory
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Example of a match history listing:
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size scriptsize
+\begin_inset CommandInset href
+LatexCommand href
+name "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=<key>"
+target "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=BAD3D130F4D06DB91EB99C1009E4A8BD"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+In each match listing query you get up to 100 descriptions of matches.
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+{ 
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+"match_id": 1522477231, 
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+"match_seq_num": 1364602476, 
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+"start_time": 1433279064, 
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+"lobby_type": 8, 
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+"radiant_team_id": 0, 
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+"dire_team_id": 0, 
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+"players": [ 
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+{ "account_id": 4294967295, "player_slot": 0, "hero_id": 14 }, 
+\end_layout
+
+\begin_layout LyX-Code
+...,
+\end_layout
+
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+{ "account_id": 4294967295, "player_slot": 128, "hero_id": 100 } ] 
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+
+\family typewriter
+\size small
+}
+\end_layout
+
+\begin_layout Subsubsection*
+And some metadata about the match request.
+\end_layout
+
+\begin_layout LyX-Code
+"status": 1, 
+\end_layout
+
+\begin_layout LyX-Code
+"num_results": 100, 
+\end_layout
+
+\begin_layout LyX-Code
+"total_results": 500, 
+\end_layout
+
+\begin_layout LyX-Code
+"results_remaining": 400
+\end_layout
+
+\begin_layout Subsection*
+Match Details
+\end_layout
+
+\begin_layout Standard
+Information about a particular match.
+ Fromatting description
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+https://wiki.teamfortress.com/wiki/WebAPI/GetMatchDetails
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Example of a match detail:
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size scriptsize
+\begin_inset CommandInset href
+LatexCommand href
+name "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id=<m_id>&key=<key>"
+target "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?match_id=27110133&key=BAD3D130F4D06DB91EB99C1009E4A8BD"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+In each game there is a section describing the player, 10 players per game.
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"account_id": 85108314, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"player_slot": 132, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"hero_id": 62, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"item_0": 185, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"item_1": 41, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"item_2": 37, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"item_3": 36, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"item_4": 50, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"item_5": 182, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"kills": 5, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"deaths": 4, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"assists": 8, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"leaver_status": 0, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"gold": 305, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"last_hits": 38, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"denies": 0, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"gold_per_min": 433, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"xp_per_min": 429, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"gold_spent": 13337, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"hero_damage": 5842, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"tower_damage": 516, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"hero_healing": 0, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"level": 16
+\end_layout
+
+\begin_layout Subsubsection*
+And after the 10 players descriptiors, there is the metadata about the game.
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"radiant_win": false, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"duration": 1914, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"start_time": 1342739723, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"match_id": 27110133, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"match_seq_num": 27106670, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"tower_status_radiant": 4, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"tower_status_dire": 1974, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"barracks_status_radiant": 3, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"barracks_status_dire": 63, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"cluster": 131, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"first_blood_time": 133, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"lobby_type": 0, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"human_players": 10, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"leagueid": 0, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"positive_votes": 0, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"negative_votes": 0, 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+"game_mode": 0
+\end_layout
+
+\begin_layout Subsection*
+Data Rate
+\end_layout
+
+\begin_layout Standard
+There are large amount of games per day.
+ As of today June 2 2015 there has been 1522415992 (1.5bn) games played since
+ Dota 2's release date of July 9, 2013 – exactly 693 days.
+ On average, this is 2.2m games per day.
+ Lately, the number of games played increases over time due to more players
+ joining Dota.
+ Each game lasts approximately 45 minutes, from experience
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+I have ~1000 hours played since its release
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Modeling to a Known Solution
+\end_layout
+
+\begin_layout Standard
+There are two kinds of models that are potentially interesting to use.
+ If there are any others please let me know.
+\end_layout
+
+\begin_layout Subsection*
+Sum product network
+\end_layout
+
+\begin_layout Subsection*
+Hierarchical temporal memory
+\end_layout
+
+\begin_layout Standard
+Development of this is fairly interesting because 
+\end_layout
+
+\end_body
+\end_document
