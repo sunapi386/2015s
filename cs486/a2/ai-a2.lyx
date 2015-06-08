@@ -1,0 +1,295 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{graphviz}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 1
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CS 486 A2 Bayesian Network and Decision Networks
+\end_layout
+
+\begin_layout Author
+Jason Sun (#20387090)
+\end_layout
+
+\begin_layout Date
+June 11, 2015
+\end_layout
+
+\begin_layout Subsection*
+Variable Elimination Algorithm Code
+\end_layout
+
+\begin_layout Subsection*
+Bayes Net Construction
+\end_layout
+
+\begin_layout Description
+OC card owner owns computer or smartphone
+\end_layout
+
+\begin_layout Description
+Fraud current transaction is fraudlent
+\end_layout
+
+\begin_layout Description
+Trav card holder is currently travelling
+\end_layout
+
+\begin_layout Description
+FP current transaction is a foreign purchase
+\end_layout
+
+\begin_layout Description
+IP current purchase is an internet purchase
+\end_layout
+
+\begin_layout Description
+CRP a computer related purchase was made within the last week
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename fraud.dot
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Probability interpretation of the financial information given on assignment
+ is as follows.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+P(Fraud|Trav) & = & 0.01\\
+P(Fraud|\neg Trav) & = & 0.004\\
+P(Trav) & = & 0.05\\
+P(FP|Fraud,\neg Trav) & = & 0.10\\
+P(FP|\neg Fraud,\neg Trav) & = & 0.01\\
+P(FP|Trav) & = & 0.90
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+P(OC) & = & 0.75\\
+P(\neg Fraud|IP,OC) & = & 0.01\\
+P(Fraud|IP,OC) & = & 0.02\\
+P(\neg Fraud|IP,\neg OC) & = & 0.001\\
+P(Fraud|IP,\neg OC) & = & 0.011\\
+P(CRP|OC) & = & 0.10\\
+P(CRP|\neg OC) & = & 0.001
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Justification process
+\end_layout
+
+\begin_layout Itemize
+Adding 
+\begin_inset Formula $IP$
+\end_inset
+
+: 
+\end_layout
+
+\begin_layout Subsection*
+Queries
+\end_layout
+
+\begin_layout Subsubsection*
+Prior Probability
+\end_layout
+
+\begin_layout Standard
+Before we search for previous computer related purchases and before we verify
+ whether it is a foreign and/or internet purchase.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $P(F)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Posterior Probability
+\end_layout
+
+\begin_layout Standard
+After we verified it is a foreign, but not internet purchase, and card hoder
+ purchased computer related accessories in past week.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $P(F|FP,\neg IP,CRP)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Business Trip Knowledge
+\end_layout
+
+\begin_layout Standard
+After we confirm spouse is out of town, changes based on this new piece
+ of information.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $P(F|FP,\neg IP,CRP)-P(F|FP,\neg IP,CRP,T)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Dishonest Employee
+\end_layout
+
+\begin_layout Standard
+A dishonest employee stole credit card, knows about the Bayes network, and
+ wants to buy over internet 
+\begin_inset Formula $IP$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Because 
+\begin_inset Formula $Fraud$
+\end_inset
+
+ is dependent on 
+\begin_inset Formula $OC,IP,Trav$
+\end_inset
+
+, only those factors contribute directly to the detection.
+ Therefore the employee should 
+\begin_inset Formula $\neg OC,\neg Trav$
+\end_inset
+
+.
+ But 
+\begin_inset Formula $OC$
+\end_inset
+
+ is not known by the bank.
+ So prior to making his purchase he should 
+\emph on
+not travel
+\emph default
+, 
+\emph on
+not buy foreign
+\emph default
+, and 
+\emph on
+make a computer related purchase within the last week
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+The probability of fraud gets reduced (changes) by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $P(F|\neg OC,\neg Trav,\neg FP,CRP)-P(F)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Bayesian Decision Network Extension
+\end_layout
+
+\end_body
+\end_document
