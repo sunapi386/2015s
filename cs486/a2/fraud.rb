@@ -89,6 +89,13 @@ def sumout(factor, variable)
     Factor.new(f0.names, new_values)
 end
 
+def normalize(factor)
+    sum = factor.table.values.inject(:+)
+    new_values = factor.table.values.collect {|v| v / sum }
+    Factor.new(factor.names, new_values)
+end
+
+
 
 f_c = Factor.new("C", [0.5,0.5])
 f_cs = Factor.new("CS",[0.1, 0.9, 0.5, 0.5])
@@ -102,6 +109,6 @@ f_cr2 = multiply(f_cs, f_sr)
 
 # sumout example from lecture 8 slide 13
 f_ex = Factor.new("ab", [0.9,0.1,0.4,0.6])
-sumout(f_ex, "a")
-
+f_ex2 = sumout(f_ex, "a")
+f_ex3 = normalize(f_ex2)
 
