@@ -79,11 +79,29 @@ def multiply(factor1, factor2)
     Factor.new(new_names, new_values)
 end
 
+def sumout(factor, variable)
+    f0 = restrict(factor, variable, 0)
+    f1 = restrict(factor, variable, 1)
 
-f = Factor.new("SRW", [0.99, 0.01, 0.9, 0.1, 0.9, 0.1, 0.0, 1.0])
-ff = restrict(f, "W", 1)
+    # merge the two factors
+    new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+) }
 
-f1 = Factor.new("CS",[0.1,0.9,0.5,0.5])
-f2 = Factor.new("SR",[0.99,0.9,0.9,0.0])
+    Factor.new(f0.names, new_values)
+end
 
-multiply(f1, f2)
+
+f_c = Factor.new("C", [0.5,0.5])
+f_cs = Factor.new("CS",[0.1, 0.9, 0.5, 0.5])
+f_cr1 = Factor.new("CR",[0.8, 0.2,0.2,0.8])
+f_srw = Factor.new("SRW", [0.99, 0.01, 0.9, 0.1, 0.9, 0.1, 0.0, 1.0])
+
+f_sr = restrict(f_srw, "W", 1)
+f_cr2 = multiply(f_cs, f_sr)
+# f_1 = multiply(f_c, f_cr1)
+# f_cr3 = multiply(f_cr1, f_cr2)
+
+# sumout example from lecture 8 slide 13
+f_ex = Factor.new("ab", [0.9,0.1,0.4,0.6])
+sumout(f_ex, "a")
+
+
