@@ -1,5 +1,11 @@
 require 'matrix'
 
+# Factors data-structure:
+# variable names of the factor are stored in a string, which also indexes
+# each possible assignment is used to index into a table of probabilities
+# Example:
+# Factor.new("CR",[0.8, 0.2,0.2,0.8])
+# => #<Factor: @names="CR", @table={[1, 1]=>0.8, [1, 0]=>0.2, [0, 1]=>0.2, [0, 0]=>0.8}>
 class Factor
     attr_accessor :names
     attr_accessor :table
@@ -51,7 +57,6 @@ def restrict(factor, variable, value)
     return f
 end
 
-
 def multiply(factor1, factor2)
     # diff factor.names
     common_name = (factor1.names.split("") & factor2.names.split(""))
@@ -95,6 +100,28 @@ def normalize(factor)
     Factor.new(factor.names, new_values)
 end
 
+# inference: computes Pr(queryVariables|evidenceList) by variable elimination
+def inference(factorList, queryVariables, orderedListOfHiddenVariables, evidenceList)
+
+    factorList.collect do |factor|
+        # restrict factors in factorList according to evidence in evidenceList
+        evidenceList.each do |evidence, value|
+            restrict(factor, evidence, value)
+        end
+    end
+    .collect do |factor|
+    # sumout hidden variables from factors in factorList,
+    # in order given in orderedListOfHiddenVariables
+        orderedListOfHiddenVariables
+        sumout(factor, variable)
+    end
+    # normalize
+    .collect do |factor|
+        normalize(factor)
+    end
+
+
+end
 
 
 f_c = Factor.new("C", [0.5,0.5])
@@ -112,3 +139,16 @@ f_ex = Factor.new("ab", [0.9,0.1,0.4,0.6])
 f_ex2 = sumout(f_ex, "a")
 f_ex3 = normalize(f_ex2)
 
+# populate evidenceList: maps variable to value
+evidenceList = Hash.new()
+evidenceList["A"] = 1
+evidenceList["B"] = 0
+
+# populate factorList:
+factorList = []
+factorList << Factor.new("C", [0.5,0.5])
+factorList << Factor.new("CS",[0.1, 0.9, 0.5, 0.5])
+factorList << Factor.new("CR",[0.8, 0.2,0.2,0.8])
+factorList << Factor.new("SRW", [0.99, 0.01, 0.9, 0.1, 0.9, 0.1, 0.0, 1.0])
+
+# populate
