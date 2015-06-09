@@ -14,8 +14,8 @@ class Factor
     # values expected to be 2^varnames.size in reverse sorted order (1s to 0s)
         raise MismatchSizeError unless 2 ** varnames.size == values.size
         @names = varnames
-        @table = Hash.new(2 ** @names.size)
-        assignments(@names.size).each_with_index { |a, i| @table[a] = values[i] }
+        @table = {}
+        assignments(Math.log2(values.size)).each_with_index { |a, i| @table[a] = values[i] }
     end
 
     private
@@ -53,7 +53,7 @@ def restrict(factor, variable, value)
     f.table = new_table
 
     # remove variable name
-    f.names = f.names.delete(variable)
+    f.names.slice!(idx)
     return f
 end
 
@@ -89,7 +89,7 @@ def sumout(factor, variable)
     f1 = restrict(factor, variable, 1)
 
     # merge the two factors
-    new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+) }
+    new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+).round(5) }
 
     Factor.new(f0.names, new_values)
 end
