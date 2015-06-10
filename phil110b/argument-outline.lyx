@@ -3,6 +3,22 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\usepackage{lastpage}
+\usepackage[ddmmyyyy]{datetime}
+
+\fancyhf{} % clear existing head/footers
+\fancyhead[L]{PHIL110B}
+\fancyhead[C]{Argument Outline}
+\fancyhead[R]{\#20387090}
+
+\fancyfoot[L]{\fontsize{8}{8} \today: \currenttime}
+\fancyfoot[R]{\fontsize{8}{8} \thepage\ / \pageref{LastPage}}
+
+\makeatletter
+\let\ps@plain\ps@fancy   % Plain page style = fancy page style
+\makeatother
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -25,6 +41,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -58,7 +75,7 @@
 \quotes_language english
 \papercolumns 1
 \papersides 1
-\paperpagestyle default
+\paperpagestyle fancy
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -73,7 +90,7 @@ PHIL 110B Argument Outline
 \end_layout
 
 \begin_layout Author
-Jason Sun (#20387090)
+#20387090
 \end_layout
 
 \begin_layout Date
@@ -81,7 +98,228 @@ June 10, 2015
 \end_layout
 
 \begin_layout Standard
+We look upon the question 
+\begin_inset Quotes eld
+\end_inset
 
+is it in our self-interest to be good?
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The tentative thesis is that it is in our self-interest to be good.
+ 
+\end_layout
+
+\begin_layout Part*
+Reasons for the thesis
+\end_layout
+
+\begin_layout Section
+From an Intelligent Agent Perspective
+\end_layout
+
+\begin_layout Standard
+We'll first look from an artificial intelligence perspective.
+ That is, we will look at why for an AI with rational emotions it would
+ be beneficial to be good and therefore in our self-interest.
+ An interesting book draw discussions from is An Introduction to MultiAgent
+ Systems 2nd ed.
+ by Michael Wooldridge
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+An Introduction to MultiAgent Systems 2nd ed.
+ by Michael Wooldridge Published May 2009 http://www.cs.ox.ac.uk/people/michael.woold
+ridge/pubs/imas/IMAS2e.html
+\end_layout
+
+\end_inset
+
+.
+ This textbook was used for studies on how intelligent agents should make
+ rational decisions, and how they should work together.
+ This book discusses on multiagent systems, and contains strong arguments
+ on why agents are self-interested to be good.
+ There are many parallelisms to humans, which can be explored.
+ 
+\end_layout
+
+\begin_layout Standard
+Firstly, let us define some terms.
+ 
+\emph on
+Multiagent systems
+\emph default
+ which are systems composed of multiple interacting computer elements, known
+ as agents.
+ 
+\emph on
+Agents
+\emph default
+ are, to some extent, capable of autonomous action – of deciding for themselves
+ what they need to do in order to satisfy their design objectives.
+ Furthermore, 
+\emph on
+rational agents
+\emph default
+ are programmed have rational behaviour which looks at the more of the economics
+ of cooperation.
+ 
+\end_layout
+
+\begin_layout Standard
+Ultimately we would demonstrate that it is in a rational agent's self-interest
+ to be good because they benefit more from cooperation with other intelligent
+ agents.
+ And we demonstrate this through analysis of the economics, through utilities
+ and preferences of an agent, and through dominate strategies and Nash equilibri
+as, and how these support the conclusion it is in our self-interest to be
+ good.
+ And if humans can behave rationally, it follows that it is also in the
+ human self-interest to be good.
+\end_layout
+
+\begin_layout Section
+Archiving Same Goals Through Just vs.
+ Unjust Means 
+\end_layout
+
+\begin_layout Standard
+In the reading 
+\begin_inset Quotes eld
+\end_inset
+
+The Ring of Gyges
+\begin_inset Quotes erd
+\end_inset
+
+ by Plato
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+“The Ring of Gyges” by Plato - Philosophy Lander.edu http://philosophy.lander.edu/i
+ntro/articles/gyges-a.pdf Accessed June 2, 2015.
+\end_layout
+
+\end_inset
+
+, it explores a sly, unjust man versus a righteous and just man.
+ Both of whom theoretically can archieve the same goals but through different
+ methods.
+ It'll be interesting to discuss how a man of the uttermost injustice can
+ live a life as good as a just man archieving the same goals through just
+ acts.
+ Intuition tells us that archiving the same end results through deceitful
+ and unjust means is certainly worse than archiving it through righteous
+ and just means.
+ And indeed, we should explore why this intuition is correct.
+\end_layout
+
+\begin_layout Standard
+A major assumption here is that the unjust man is capable of maintaining
+ his composure at all times, he does not fall out of character.
+ It seems that this assumption is quite difficult to accomplish for the
+ average layman.
+ Sure, there are those of us that are deceptive enough to carry this out,
+ but for the average person, it is much easier to maintain the composure
+ of being just and righteous.
+ 
+\end_layout
+
+\begin_layout Standard
+A lot of the arguments explored here are suppositions, and not as solid
+ in logic analysis as from the intelligent agent perspective.
+ But nevertheless, the fundamental argument in this section is to show that
+ it's much easier to maintain a righteous and just composure than a deceitful
+ and unjust one, as in most people find it difficult to maintain a deceitful
+ composure.
+ Consequently, if we act just, then it is in our interest to behave cooperativel
+y, and we do that by having a self-interest to be good.
+\end_layout
+
+\begin_layout Section
+Future Benefits of Being Good
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Being good often offers rewards in the future
+\emph default
+ when others have good opinions of you and gain trust.
+ You get a wider choice of options to choose from than being greedy.
+ We'll look at this from the perspective of ethical egoism
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Chapter 8 Ethical Egoism p.
+ 106 The Fundamentals of Ethics by Russ Shafer-Landau
+\end_layout
+
+\end_inset
+
+.
+ The argument is that we should do whatever that improves our own well-being.
+ Being good usually offers more rewards for the collective group than being
+ greedy.
+ Examples include Prisoner's Dillema, payoff matricies, and cooperative
+ theories.
+ 
+\end_layout
+
+\begin_layout Standard
+Since being good opens the opportunity and generates more rewards in the
+ long run, it is worth being good as a principle for investment.
+ We conclude that it is in our self-interest to be good.
+\end_layout
+
+\begin_layout Section
+Behaving Irrationally is a Bad Strategy
+\end_layout
+
+\begin_layout Standard
+Lastly, in the Collective Action Problem reading
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+p.
+ 366 Constellations Volume 7, Number 3, 2000 Ideology and Irrationality.
+ http://homes.chass.utoronto.ca/~jheath/ideology.pdf Accessed June 3, 2015
+\end_layout
+
+\end_inset
+
+, people seem to behave irrationally because it seems like the best action,
+ at a cost to others.
+ This problem reduces to the prisoner's dilemma problem, which we analyse
+ from the intelligent agent perspective.
+ This reading suggests that we are lazy individuals who don't want to be
+ the one putting in the effort to be good, unless everyone is doing good.
+ And if everyone is doing good, then certainly it is going be in our self-intere
+st to sit back and reap the fruits of other's labour.
+ So this seems to be a catch-22 problem.
+ 
+\end_layout
+
+\begin_layout Standard
+We argue that while you can reap the reward, it is only temporarily so.
+ Assuming that people are of generally the same intelligence, which is quite
+ reasonable, then it's reasonable to assume others learn eventually of your
+ tactics, and the whole system collapses.
+ There won't be any fruits of labour to reap.
+ Everyone doing good is an unstable equilibrium.
+\end_layout
+
+\begin_layout Standard
+Thus it is in our self-interest to be good and help maintain a good, stable
+ equilibrium and cooperate so that the collective benefit is greater than
+ indivdual greedy-action benefits.
+ Which essentially the Nash equilibrium conclusion.
 \end_layout
 
 \end_body
