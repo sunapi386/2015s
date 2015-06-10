@@ -18,6 +18,10 @@ class Factor
         assignments(Math.log2(values.size)).each_with_index { |a, i| @table[a] = values[i] }
     end
 
+    def clone
+        Factor.new(@names, @table.values)
+    end
+
     private
     # all methods below this are private
 
@@ -32,32 +36,7 @@ class Factor
 
 end
 
-def restrict(factor, variable, value)
-# restricts a variable to some value
-    raise Error unless factor.names.include?(variable) && (value == 0 || value == 1)
-    f = factor.clone
-    f.names = factor.names.clone
-    f.table = Marshal.load(Marshal.dump(factor.table))
-
-    idx = f.names.index(variable)
-
-    # remove entries not equal to value
-    f.table = f.table.delete_if { |k, v| k[ idx ] != value }
-
-    # change key names
-    new_table = Hash.new(f.table.size)
-    f.table.each do |key, value|
-        key.delete_at(idx)
-        new_table[key] = value
-    end
-    f.table = new_table
-
-    # remove variable name
-    f.names.slice!(idx)
-    return f
-end
-
-def multiply(factor1, factor2)
+def multiply_sumout(factor1, factor2)
     # diff factor.names
     common_name = (factor1.names.split("") & factor2.names.split(""))
     # xor factor.names
@@ -66,20 +45,78 @@ def multiply(factor1, factor2)
     common_name = common_name.join("")
     new_names = new_names.join("")
     # new probabilities
-    new_values = Array.new(2 ** new_names.size) {0}
 
-    [0,1].each do |bool|
-        tmp1 = restrict(factor1, common_name, bool)
-        tmp2 = restrict(factor2, common_name, bool)
+    # positive
+    tmp1 = restrict(factor1, common_name, 1)
+    tmp2 = restrict(factor2, common_name, 1)
 
-        m1 = Matrix[tmp1.table.values]
-        m2 = Matrix[tmp2.table.values]
+    m1 = Matrix[tmp1.table.values]
+    m2 = Matrix[tmp2.table.values]
 
-        half_sum = (m1.t * m2).to_a.flatten
+    half_sum_1 = (m1.t * m2)
 
-        # add half_sum to new_values
-        new_values = new_values.zip(half_sum).map {|a| a.inject(:+).round(5) }
-    end
+    # negative
+    tmp1 = restrict(factor1, common_name, 0)
+    tmp2 = restrict(factor2, common_name, 0)
+
+    m1 = Matrix[tmp1.table.values]
+    m2 = Matrix[tmp2.table.values]
+
+    half_sum_2 = (m1.t * m2)
+
+    # add half_sum to new_values
+    new_values = (half_sum_1 + half_sum_2).round(5).to_a.flatten
+
+    Factor.new(new_names, new_values)
+end
+
+def restrict(factor, variable, value)
+# restricts a variable to some value
+    raise NoCommonNamesError unless factor.names.include?(variable)
+    f = Factor.new(factor.names, factor.table.values)
+    idx = f.names.index(variable)
+
+    # remove entries not equal to value
+    f.table.delete_if { |k, v| k[ idx ] != value }
+
+    # # change key names
+    # new_table = Hash.new(f.table.size)
+    # f.table.each do |key, value|
+    #     key.delete_at(idx)
+    #     new_table[key] = value
+    # end
+    # f.table = new_table
+
+    # # remove variable name
+    # f.names.slice!(idx)
+    return f
+end
+
+def multiply(factor1, factor2)
+    common_name = (factor1.names.split("") & factor2.names.split("")).join("")
+    new_names = (factor1.names + factor2.names)
+    new_names.slice!(new_names.index(common_name))
+
+    # positive
+    tmp1 = restrict(factor1, common_name, 1)
+    tmp2 = restrict(factor2, common_name, 1)
+
+    m1 = Matrix[tmp1.table.values]
+    m2 = Matrix[tmp2.table.values]
+
+    half1 = (m1.t * m2).to_a.flatten
+
+    # negative
+    tmp3 = restrict(factor1, common_name, 0)
+    tmp4 = restrict(factor2, common_name, 0)
+
+    m3 = Matrix[tmp3.table.values]
+    m4 = Matrix[tmp4.table.values]
+
+    half2 = (m3.t * m4).to_a.flatten
+
+    # add half_sum to new_values
+    new_values = (half1 + half2).map {|x| x.round(10) }
 
     Factor.new(new_names, new_values)
 end
@@ -87,11 +124,13 @@ end
 def sumout(factor, variable)
     f0 = restrict(factor, variable, 0)
     f1 = restrict(factor, variable, 1)
-
+    name = factor.names.clone
     # merge the two factors
     new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+).round(5) }
-
-    Factor.new(f0.names, new_values)
+    name.slice!(name.index(variable))
+    new_factor = Factor.new(name, new_values)
+    # return sumout(new_factor, variable) if new_factor.names.include?(variable)
+    # new_factor
 end
 
 def normalize(factor)
@@ -122,6 +161,18 @@ def inference(factorList, queryVariables, orderedListOfHiddenVariables, evidence
 
 
 end
+
+fa = Factor.new("A",[0.9,0.1])
+fab = Factor.new("AB",[0.9,0.1,0.4,0.6])
+
+fa0 = restrict(fa, "A", 0)
+fab0 = restrict(fab, "A", 0)
+
+fa1 = restrict(fa, "A", 1)
+fab1= restrict(fab, "A", 1)
+
+multiply(fa, fab)
+
 
 
 f_c = Factor.new("C", [0.5,0.5])
