@@ -23,7 +23,7 @@ class Factor
 
     def assignments(n)
     # n is int, returns 2^n assignments array
-        return [[0],[1]] if n == 1
+        return [[1],[0]] if n == 1
         a = assignments(n-1)
         b1 = a.collect { |e| e + [0] }
         b2 = a.collect { |e| e + [1] }
