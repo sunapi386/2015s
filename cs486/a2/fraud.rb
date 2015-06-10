@@ -19,7 +19,7 @@ class Factor
     end
 
     def clone
-        Factor.new(@names, @table.values)
+        Factor.new(@names.clone, @table.values.clone)
     end
 
     private
@@ -73,7 +73,7 @@ end
 def restrict(factor, variable, value)
 # restricts a variable to some value
     raise NoCommonNamesError unless factor.names.include?(variable)
-    f = Factor.new(factor.names, factor.table.values)
+    f = factor.clone
     idx = f.names.index(variable)
 
     # remove entries not equal to value
@@ -88,7 +88,7 @@ def restrict(factor, variable, value)
     # f.table = new_table
 
     # # remove variable name
-    # f.names.slice!(idx)
+    f.names.slice!(idx)
     return f
 end
 
@@ -96,8 +96,8 @@ def multiply(factor1, factor2)
     common_name = (factor1.names.split("") & factor2.names.split("")).join("")
     # swap factor1 with factor2 if need be (to mult vars next to each other)
     # FIXME: this may be buggy
-    name_order1 = (factor1.names + factor2.names).rindex(common_name)
-    name_order2 = (factor2.names + factor1.names).rindex(common_name)
+    name_order1 = ((factor1.names + factor2.names).rindex(common_name) - (factor1.names + factor2.names).index(common_name)).abs
+    name_order2 = ((factor2.names + factor1.names).rindex(common_name) - (factor2.names + factor1.names).index(common_name)).abs
     if(name_order1 > name_order2)
         tmp = factor1
         factor1 = factor2
@@ -179,7 +179,7 @@ fa0 = restrict(fa, "A", 0)
 fab0 = restrict(fab, "A", 0)
 
 fa1 = restrict(fa, "A", 1)
-fab1= restrict(fab, "A", 1)
+fab1 = restrict(fab, "A", 1)
 
 f4 = multiply(fa, fab)
 f4 = sumout(f4, "A")
@@ -196,8 +196,14 @@ f_srw = Factor.new("SRW", [0.99, 0.01, 0.9, 0.1, 0.9, 0.1, 0.0, 1.0])
 
 f_sr = restrict(f_srw, "W", 1)
 f_cr2 = multiply(f_cs, f_sr)
-# f_1 = multiply(f_c, f_cr1)
-# f_cr3 = multiply(f_cr1, f_cr2)
+f_cr2 = sumout(f_cr2, "S")
+f_cr3 = multiply(f_cr1, f_cr2)
+f_cr3 = sumout(f_cr3, "R")
+
+f_cr3 = sumout(f_cr3, "R")
+f_1 = multiply(f_c, f_cr1)
+f_1 = sumout(f_c, f_cr1)
+
 
 # sumout example from lecture 8 slide 13
 f_ex = Factor.new("ab", [0.9,0.1,0.4,0.6])
