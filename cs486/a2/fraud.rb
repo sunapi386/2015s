@@ -94,6 +94,15 @@ end
 
 def multiply(factor1, factor2)
     common_name = (factor1.names.split("") & factor2.names.split("")).join("")
+    # swap factor1 with factor2 if need be (to mult vars next to each other)
+    # FIXME: this may be buggy
+    name_order1 = (factor1.names + factor2.names).rindex(common_name)
+    name_order2 = (factor2.names + factor1.names).rindex(common_name)
+    if(name_order1 > name_order2)
+        tmp = factor1
+        factor1 = factor2
+        factor2 = tmp
+    end
     new_names = (factor1.names + factor2.names)
     new_names.slice!(new_names.index(common_name))
 
@@ -122,6 +131,7 @@ def multiply(factor1, factor2)
 end
 
 def sumout(factor, variable)
+    raise NoCommonNamesError unless factor.names.include?(variable)
     f0 = restrict(factor, variable, 0)
     f1 = restrict(factor, variable, 1)
     name = factor.names.clone
@@ -171,9 +181,13 @@ fab0 = restrict(fab, "A", 0)
 fa1 = restrict(fa, "A", 1)
 fab1= restrict(fab, "A", 1)
 
-multiply(fa, fab)
+f4 = multiply(fa, fab)
+f4 = sumout(f4, "A")
 
-
+f3 = Factor.new("BC",[0.7,0.3,0.2,0.8])
+f5 = multiply(f3,f4)
+f5 = multiply(f4,f3)
+f5 = sumout(f5, "B")
 
 f_c = Factor.new("C", [0.5,0.5])
 f_cs = Factor.new("CS",[0.1, 0.9, 0.5, 0.5])
