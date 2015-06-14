@@ -108,32 +108,53 @@ def normalize(factor)
     Factor.new(factor.names, new_values)
 end
 
-# inference: computes Pr(queryVariables|evidenceList) by variable elimination
-def inference(factorList, queryVariables, orderedListOfHiddenVariables, evidenceList)
+# inference: computes Pr(queryVars|evidences) by variable elimination
+def inference(factors, queryVars, ordering, evidences)
+    raise NoCommonNamesError unless factors.is_a?(Array) && queryVars.is_a?(String) && ordering.is_a?(String) && evidences.is_a?(Hash)
 
-    factorList.collect do |factor|
-        # restrict factors in factorList according to evidence in evidenceList
-        evidenceList.collect do |evidence, value|
-            restrict(factor, evidence, value)
-        end
-    end.collect do |factor|
-    # sumout hidden variables from factors in factorList,
-    # in order given in orderedListOfHiddenVariables
-        orderedListOfHiddenVariables
-        sumout(factor, variable)
-    end.collect do |factor|     # normalize
-        normalize(factor)
+    # restrict factors w.r.t. evidences
+    # restricted = factors.each do |factor|
+    #     evidences.split("").each do |evidence, value|
+    #         puts "A"
+    #         factor = restrict(factor, evidence, value)
+    #     end
+    # end
+
+
+    # sumout factors w.r.t. ordering
+    while factors.size > 1
+        last = factors.pop
+        second_last = factors.pop
+        common_name = (last.names.split("") & second_last.names.split("")).join("")
+        mt = multiply(second_last, last)
+        so = sumout(mt, common_name)
+        factors.push(so)
+    end
+
+
+
+    # normalize
+    factors.each do |f|
+        f = normalize(f)
     end
 
 end
 
+# Example A->B->C
+f1 = Factor.new("A",[0.9,0.1])
+f2 = Factor.new("AB",[0.9,0.1,0.4,0.6])
+f3 = Factor.new("BC",[0.7,0.3,0.2,0.8])
+factors = [f1, f2, f3]
+queryVars = "C"
+ordering = "AB"
+evidences = {}
+inference(factors, queryVars, ordering, evidences)
 
 
-
-# populate evidenceList: maps variable to value
-evidenceList = Hash.new()
-evidenceList["A"] = 1
-evidenceList["B"] = 0
+# populate evidences: maps variable to value
+evidences = Hash.new()
+evidences["A"] = 1
+evidences["B"] = 0
 
 # populate factorList:
 factorList = []
