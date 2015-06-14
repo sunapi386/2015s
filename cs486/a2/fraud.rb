@@ -110,28 +110,28 @@ end
 
 # inference: computes Pr(queryVars|evidences) by variable elimination
 def inference(factors, queryVars, ordering, evidences)
-    raise NoCommonNamesError unless factors.is_a?(Array) && queryVars.is_a?(String) && ordering.is_a?(String) && evidences.is_a?(Hash)
+    raise NoCommonNamesError unless factors.is_a?(Array) &&
+                                    queryVars.is_a?(Array) &&
+                                    ordering.is_a?(Array) &&
+                                    evidences.is_a?(Hash) &&
+                                    ordering.size == factors.size - 1
 
     # restrict factors w.r.t. evidences
-    # restricted = factors.each do |factor|
-    #     evidences.split("").each do |evidence, value|
-    #         puts "A"
-    #         factor = restrict(factor, evidence, value)
-    #     end
-    # end
-
+    factors.each do |f|
+        evidences.each do |var, value|
+            f = restrict(f, var, value)
+        end
+    end
 
     # sumout factors w.r.t. ordering
     while factors.size > 1
-        last = factors.pop
-        second_last = factors.pop
-        common_name = (last.names.split("") & second_last.names.split("")).join("")
-        mt = multiply(second_last, last)
-        so = sumout(mt, common_name)
+        var = ordering.shift
+        first = factors.shift
+        second = factors.shift
+        mt = multiply(first, second)
+        so = sumout(mt, var)
         factors.push(so)
     end
-
-
 
     # normalize
     factors.each do |f|
@@ -145,8 +145,8 @@ f1 = Factor.new("A",[0.9,0.1])
 f2 = Factor.new("AB",[0.9,0.1,0.4,0.6])
 f3 = Factor.new("BC",[0.7,0.3,0.2,0.8])
 factors = [f1, f2, f3]
-queryVars = "C"
-ordering = "AB"
+queryVars = ["C"]
+ordering = ["A", "B"]
 evidences = {}
 inference(factors, queryVars, ordering, evidences)
 
