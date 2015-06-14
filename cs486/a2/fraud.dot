@@ -1,8 +1,8 @@
 digraph G {
     OC -> CRP;
-    OC -> Fraud;
-    IP -> Fraud;
+    OC -> IP;
     Trav -> Fraud;
     Trav -> FP;
     Fraud -> FP;
+    Fraud -> IP;
 }
