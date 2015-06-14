@@ -129,62 +129,6 @@ end
 
 
 
-# Example AIMA p. 527
-fAB = Factor.new("AB", [0.3, 0.7, 0.9, 0.1])
-fBC = Factor.new("BC", [0.2, 0.8, 0.6, 0.4])
-multiply(fAB, fBC)
-
-
-# Example pointwise multiply on wikipedia
-fpq = Factor.new("pq", [0.1,0.3,0.5,0.7])
-fqr = Factor.new("qr", [0.2,0.4,0.6,0.8])
-multiply(fpq, fqr) # expect [0.02, 0.04, 0.18, 0.24, 0.1, 0.2, 0.42, 0.56]
-
-
-f1 = Factor.new("A",[0.9,0.1])
-f2 = Factor.new("AB",[0.9,0.1,0.4,0.6])
-f3 = Factor.new("BC",[0.7,0.3,0.2,0.8])
-
-# fa0 = restrict(fa, "A", 0)
-# fab0 = restrict(fab, "A", 0)
-
-# fa1 = restrict(fa, "A", 1)
-# fab1 = restrict(fab, "A", 1)
-
-f4 = multiply(f1, f2)
-f4 = sumout(f4, "A")
-
-f5 = multiply(f3,f4)
-f5 = multiply(f4,f3)
-f5 = sumout(f5, "B")
-
-f_c = Factor.new("C", [0.5,0.5])
-f_cs = Factor.new("CS",[0.1, 0.9, 0.5, 0.5])
-f_cr1 = Factor.new("CR",[0.8, 0.2,0.2,0.8])
-f_srw = Factor.new("SRW", [0.99, 0.01, 0.9, 0.1, 0.9, 0.1, 0.0, 1.0])
-
-f_sr = restrict(f_srw, "W", 1)
-
-f_cr2 = multiply_sumout(f_cs, f_sr)
-f_x = multiply_sumout(f_c, f_cr1)
-f_r = multiply_sumout(f_x, f_cr2)
-
-
-f_cr2 = multiply(f_cs, f_sr)
-f_cr2 = sumout(f_cr2, "S")
-normalize(f_cr2)
-
-f_cr3 = multiply(f_cr1, f_cr2)
-f_cr3 = sumout(f_cr3, "R")
-
-f_r = multiply(f_c, f_cr3)
-f_r = sumout(f_r, "R")
-
-
-# sumout example from lecture 8 slide 13
-f_ex = Factor.new("ab", [0.9,0.1,0.4,0.6])
-f_ex2 = sumout(f_ex, "a")
-f_ex3 = normalize(f_ex2)
 
 # populate evidenceList: maps variable to value
 evidenceList = Hash.new()
@@ -199,3 +143,6 @@ factorList << Factor.new("CR",[0.8, 0.2,0.2,0.8])
 factorList << Factor.new("SRW", [0.99, 0.01, 0.9, 0.1, 0.9, 0.1, 0.0, 1.0])
 
 # populate
+
+
+
