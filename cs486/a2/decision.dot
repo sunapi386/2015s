@@ -1,0 +1,14 @@
+digraph G {
+    Block [shape=box]
+    Utility [shape=diamond]
+
+    OC -> CRP;
+    OC -> IP;
+    Trav -> Fraud;
+    Trav -> FP;
+    Fraud -> FP;
+    Fraud -> IP;
+    Fraud -> Block;
+    Fraud -> Utility;
+    Block -> Utility;
+}

@@ -1,0 +1,34 @@
+
+====== Question 2b prior: Jon Snow's Credit Company
+Pr(Fraud) = {[1]=>0.004300000000000002, [0]=>0.9957}
+
+
+====== Question 2b posterior: Nerd makes foreign purchase offline
+Pr(Fraud | FP, ~IP, CRP) = {[1]=>0.014983808629447266, [0]=>0.9850161913705529}
+
+
+====== Question 2c: Jon Snow Co. verfies his client is tripping out
+Pr(Fraud | FP, ~IP, CRP, Trav) = {[1]=>0.009899992918724067, [0]=>0.9901000070812759}
+
+Changes in fraud probability (rounded 8 decimals):
+before 0.01498381 - after 0.00989999 = 0.00508382
+After calling we are 0.508382 % more confident
+
+====== Question 2d: Jon Snow's traitor
+Before infiltration:
+Pr(Fraud | IP) = {[1]=>0.009794045938662902, [0]=>0.990205954061337}
+
+After infiltration:
+Pr(Fraud | ~Trav, IP, CRP, ~FP) = {[1]=>0.0072597942305469565, [0]=>0.992740205769453}
+
+Changes in fraud probability (rounded 8 decimals):
+before 0.00725979 - after 0.00979405 = -0.00253425
+After preparing to steal, chance of getting caught -0.253425%
+
+====== Question 3b: Block nerd's $1000 foreign purchase made offline?
+Pr(Block | FP, ~IP, CRP) = {[1]=>-9.850161913705529, [0]=>-10.0587276725945}
+
+
+====== Question 3c: Block same transaction knowing he's travelling?
+Pr(Block | FP, ~IP, CRP, Trav) = {[1]=>-9.901000070812758, [0]=>-4.949492883317688}
+
