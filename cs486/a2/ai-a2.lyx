@@ -130,6 +130,7 @@ CRP a computer related purchase was made within the last week
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -1860,6 +1861,33 @@ every variable that is not an ancestor of a query variable or evidence variable
 .
 \end_layout
 
+\begin_layout Section*
+Note to teaching assistant markers
+\end_layout
+
+\begin_layout Standard
+Providing a prinout of factors computed at each step of the variable elimination
+ results in very long file.
+ I attach a file called 
+\family typewriter
+detailed.out
+\family default
+ to avoid polluting the pdf.
+ Additionally, you can turn on the flag 
+\family typewriter
+DETAILED = true
+\family default
+ in 
+\family typewriter
+factor.rb
+\family default
+ to generate this when testing with 
+\family typewriter
+ruby fraud.rb
+\family default
+.
+\end_layout
+
 \begin_layout Subsubsection*
 Question 2b Prior Probability
 \end_layout
@@ -1926,13 +1954,11 @@ After we confirm spouse is out of town, changes based on this new piece
 \end_layout
 
 \begin_layout Verbatim
-
 ====== Question 2c: Jon Snow Co.
  verfies his client is tripping out 
 \end_layout
 
 \begin_layout Verbatim
-
 Pr(Fraud | FP, ~IP, CRP, Trav) = {[1]=>0.009899992918724067, [0]=>0.99010000708127
 59}
 \end_layout
@@ -1942,17 +1968,14 @@ Pr(Fraud | FP, ~IP, CRP, Trav) = {[1]=>0.009899992918724067, [0]=>0.990100007081
 \end_layout
 
 \begin_layout Verbatim
-
 Changes in fraud probability (rounded 8 decimals): 
 \end_layout
 
 \begin_layout Verbatim
-
 before 0.01498381 - after 0.00989999 = 0.00508382 
 \end_layout
 
 \begin_layout Verbatim
-
 After calling we have change of 0.508382%
 \end_layout
 
@@ -2002,7 +2025,6 @@ don't buy foreign
 \end_layout
 
 \begin_layout Verbatim
-
 ====== Question 2d: Jon Snow's traitor 
 \end_layout
 
@@ -2011,12 +2033,10 @@ don't buy foreign
 \end_layout
 
 \begin_layout Verbatim
-
 Before infiltration: 
 \end_layout
 
 \begin_layout Verbatim
-
 Pr(Fraud | IP) = {[1]=>0.009794045938662902, [0]=>0.990205954061337}
 \end_layout
 
@@ -2025,12 +2045,10 @@ Pr(Fraud | IP) = {[1]=>0.009794045938662902, [0]=>0.990205954061337}
 \end_layout
 
 \begin_layout Verbatim
-
 After infiltration: 
 \end_layout
 
 \begin_layout Verbatim
-
 Pr(Fraud | ~Trav, IP, CRP, ~FP) = {[1]=>0.0072597942305469565, [0]=>0.992740205769
 453}
 \end_layout
@@ -2040,12 +2058,10 @@ Pr(Fraud | ~Trav, IP, CRP, ~FP) = {[1]=>0.0072597942305469565, [0]=>0.9927402057
 \end_layout
 
 \begin_layout Verbatim
-
 Changes in fraud probability (rounded 8 decimals): 
 \end_layout
 
 \begin_layout Verbatim
-
 before 0.00725979 - after 0.00979405 = -0.00253425 
 \end_layout
 
@@ -2054,7 +2070,6 @@ before 0.00725979 - after 0.00979405 = -0.00253425
 \end_layout
 
 \begin_layout Verbatim
-
 After preparing to steal, chance of getting caught -0.253425%
 \end_layout
 
@@ -2083,6 +2098,7 @@ Decision Network
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -2421,12 +2437,10 @@ Question 3b
 \end_layout
 
 \begin_layout Verbatim
-
 ====== Question 3b: Block nerd's $1000 foreign purchase made offline? 
 \end_layout
 
 \begin_layout Verbatim
-
 Pr(Block | FP, ~IP, CRP) = {[1]=>-9.850161913705529, [0]=>-10.0587276725945}
 \end_layout
 
@@ -2447,12 +2461,10 @@ Question 3c
 \end_layout
 
 \begin_layout Verbatim
-
 ====== Question 3c: Block same transaction knowing he's travelling? 
 \end_layout
 
 \begin_layout Verbatim
-
 Pr(Block | FP, ~IP, CRP, Trav) = {[1]=>-9.901000070812758, [0]=>-4.949492883317688
 }
 \end_layout

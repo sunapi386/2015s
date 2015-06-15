@@ -1,5 +1,5 @@
 require 'matrix'
-
+DETAILED = false
 # Factors data-structure:
 # variable names of the factor are stored in a string, which also indexes
 # each possible assignment is used to index into a table of probabilities
@@ -127,25 +127,32 @@ def inference(factors, queryVars, ordering, evidences)
                                     evidences.is_a?(Hash)
 
     # restrict factors w.r.t. evidences
-    # puts "Inference Step 1 (Restrict)"
+    puts "\t\tInference Step 0 (Unmodified Factors)" if DETAILED
+    factors.each { |f| puts f.inspect } if DETAILED
     evidences.each do |var, val|
         factors.each_with_index do |f,i|
             factors[i] = restrict(factors[i], var, val)
         end
-        # puts "restrict #{var} #{val}: #{factors.map{|f| f.names}}"
     end
+    puts "\t\tInference Step 1 (Factors After Restriction)" if DETAILED
+    factors.each { |f| puts f.inspect } if DETAILED
+
     # multiply everything into this factor
-    # puts "Inference Step 2 (Multiply)"
+    puts "\t\tInference Step 2 (Multiply)" if DETAILED
     prod_factor = nil
     factors.each do |factor|
         prod_factor = multiply(prod_factor, factor)
-        # puts "product #{prod_factor.names}"
+        puts "Product Factor #{prod_factor.inspect}" if DETAILED
     end
-    # puts "Inference Step 3 (Sumout)"
+
+    puts "\t\tInference Step 3 (Sumout)" if DETAILED
     ordering.each do |var|
         prod_factor = sumout(prod_factor, var)
-        # puts "sumout #{var}: #{prod_factor.names}"
+        puts "Product after sumout #{var}: #{prod_factor.inspect}" if DETAILED
     end
+
+    puts "\t\tInference 4 (Normalized)" if DETAILED
+    puts normalize(prod_factor).inspect if DETAILED
     normalize(prod_factor)
 end
 
