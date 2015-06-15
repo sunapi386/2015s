@@ -26,9 +26,7 @@ class Factor
         Factor.new(@names.clone, @table.values.clone)
     end
 
-    private
-    # all methods below this are private
-
+    private # all methods below this are private
     def assignments(n)
     # n is int, returns 2^n assignments array
         return [[1],[0]] if n == 1
@@ -37,11 +35,9 @@ class Factor
         b2 = a.collect { |e| e + [1] }
         (b1 + b2).sort.reverse
     end
-
 end
 
 def restrict(factor, variable, value)
-# restricts a variable to some value
     return factor unless factor.names.include?(variable)
     f = factor.clone
     idx = f.names.index(variable)
@@ -49,7 +45,7 @@ def restrict(factor, variable, value)
     # remove entries not equal to value
     f.table.delete_if { |k, _| k[ idx ] != value }
 
-    # # change key names
+    # change key names
     new_table = Hash.new(f.table.size)
     f.table.each do |key, value|
         key.delete_at(idx)
@@ -57,7 +53,7 @@ def restrict(factor, variable, value)
     end
     f.table = new_table
 
-    # # remove variable name
+    # remove variable name
     f.names.slice!(idx)
     return f
 end
@@ -65,13 +61,12 @@ end
 def multiply(first, second)
     return first.clone if second.nil?
     return second.clone if first.nil?
-    # puts "multiply #{first.table.values} #{second.table.values}"
 
     def is_desired(k1, mapping, k2)
         # returns true if k1 == k2 given mapping of bits from k1 to k2
         # e.g. k1 = [X, 0, 1] and k2 = [1, 0, X]
         # where k1's index: ["X", "A", "B"] and k2's index: ["B", "A", "D"]
-        #                      0,   1,   2                    0,   1 ,   2
+        #                      0,   1,   2                     0,   1,   2
         # mapping would be: {1 => 1, 2 => 0}
         # we want to return true since k1 == k2 given this index
         # more ex:
@@ -96,17 +91,14 @@ def multiply(first, second)
         mapping[first.names.index(name)] = second.names.index(name)
     end
 
-    # for each key1 in first.table, multiply value1 with value2 if key2 is
-    # desired when given a mapping of
+    # multiply value1 with value2 if key1 has same entry in key2
     new_values = first.table.collect do |k1, v1|
         second.table.collect do |k2, v2|
             if is_desired(k1, mapping, k2)
-                # puts "#{k1} #{v1} #{k2} #{v2}"
                 (v1 * v2)
             end
         end
     end.flatten.compact
-
     Factor.new(new_names, new_values)
 end
 
@@ -133,39 +125,21 @@ def inference(factors, queryVars, ordering, evidences)
                                     queryVars.is_a?(Array) &&
                                     ordering.is_a?(Array) &&
                                     evidences.is_a?(Hash)
-
     # restrict factors w.r.t. evidences
-    # new_factors = factors.collect {|f| f.clone }
     evidences.each do |var, val|
         factors.each_with_index do |f,i|
-            # puts "#{var} #{val} #{f.inspect} #{i}"
             factors[i] = restrict(factors[i], var, val)
         end
     end
-
-    # multiply factors together until single factor left
-    # while factors.size > 1
-    #     first = factors.shift
-    #     second = factors.shift
-    #     mt = multiply(first, second)
-    #     factors.push(mt)
-    # end
-    # product = factors.first
-
+    # multiply everything into this factor
     product_factor = nil
     factors.each do |factor|
         product_factor = multiply(product_factor, factor)
     end
-
-    # sumout w.r.t. ordering
     ordering.each do |var|
-        # puts "sumout #{product_factor.table.values} #{var}"
         product_factor = sumout(product_factor, var)
     end
-
-    # normalize
     normalize(product_factor)
-
 end
 
 def print_summary(result, evidences)
@@ -179,11 +153,3 @@ def print_summary(result, evidences)
     print ") = #{result.table.inspect}\r\n"
     puts
 end
-
-
-
-
-
-
-
-

@@ -34,7 +34,6 @@ CRP = Factor.new(["CRP", "OC"], [
     0.001,
     1 - 0.10,
     1 - 0.001])
-
 Utility = Factor.new(["Block", "Fraud"], [
     0.0,
     -10.0,
@@ -45,13 +44,11 @@ queryVars = ["Fraud"]
 ordering = ["Trav", "FP", "IP", "OC", "CRP"]
 factors = [Fraud.clone, Trav.clone, FP.clone, IP.clone, CRP.clone, OC.clone]
 
-
 # Question 2b Prior
 puts "\r\n====== Question 2b prior: Jon Snow Credit Co. "
 evidences = {}
 result = inference(factors, queryVars, ordering, evidences)
 print_summary(result, evidences)
-
 
 # Question 2b Posterior
 puts "\r\n====== Question 2b posterior: Nerd makes foreign purchase offline"
@@ -71,13 +68,10 @@ evidences = {"IP" => 1}
 result = inference(factors, queryVars, ordering, evidences)
 puts "Before infiltration:"
 print_summary(result, evidences)
-result_before = result
-
 evidences = {"Trav" => 0, "IP" => 1, "CRP" => 1, "FP" => 0}
 result = inference(factors, queryVars, ordering, evidences)
 puts "After infiltration:"
 print_summary(result, evidences)
-
 
 # Question 3b
 evidences = {"FP" => 1, "IP" => 0, "CRP" => 1}
