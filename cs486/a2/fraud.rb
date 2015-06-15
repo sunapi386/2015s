@@ -38,12 +38,12 @@ end
 
 def restrict(factor, variable, value)
 # restricts a variable to some value
-    raise NoCommonNamesError unless factor.names.include?(variable)
+    return factor.clone unless factor.names.include?(variable)
     f = factor.clone
     idx = f.names.index(variable)
 
     # remove entries not equal to value
-    f.table.delete_if { |k, v| k[ idx ] != value }
+    f.table.delete_if { |k, _| k[ idx ] != value }
 
     # # change key names
     new_table = Hash.new(f.table.size)
@@ -59,7 +59,7 @@ def restrict(factor, variable, value)
 end
 
 def multiply(f1, f2)
-    common_name = (f1.names.split("") & f2.names.split("")).join("")
+    common_name = (f1.names & f2.names).join("")
     # swap f1 with f2 if need be (to mult vars next to each other)
     # FIXME: this may be buggy
     name_order1 = ((f1.names + f2.names).rindex(common_name) - (f1.names + f2.names).index(common_name)).abs
@@ -70,8 +70,7 @@ def multiply(f1, f2)
         f2 = tmp
     end
     new_names = (f1.names + f2.names)
-    new_names.slice!(common_name)
-
+    new_names.delete_at(new_names.index(common_name))
 
     n1_idx = f1.names.index(common_name)
     n2_idx = f2.names.index(common_name)
@@ -90,16 +89,14 @@ def multiply(f1, f2)
 end
 
 def sumout(factor, variable)
-    raise NoCommonNamesError unless factor.names.include?(variable)
+    return factor.clone unless factor.names.include?(variable)
     f0 = restrict(factor, variable, 0)
     f1 = restrict(factor, variable, 1)
     name = factor.names.clone
     # merge the two factors
     new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+).round(5) }
-    name.slice!(name.index(variable))
-    new_factor = Factor.new(name, new_values)
-    # return sumout(new_factor, variable) if new_factor.names.include?(variable)
-    # new_factor
+    name.delete_at(name.index(variable))
+    Factor.new(name, new_values)
 end
 
 def normalize(factor)
@@ -114,56 +111,74 @@ def inference(factors, queryVars, ordering, evidences)
                                     queryVars.is_a?(Array) &&
                                     ordering.is_a?(Array) &&
                                     evidences.is_a?(Hash) &&
-                                    ordering.size == factors.size - 1
 
     # restrict factors w.r.t. evidences
-    factors.each do |f|
-        evidences.each do |var, value|
+    evidences.each do |var, value|
+        factors.each do |f|
             f = restrict(f, var, value)
         end
     end
 
-    # sumout factors w.r.t. ordering
+    # multiply factors together until single factor left
     while factors.size > 1
-        var = ordering.shift
         first = factors.shift
         second = factors.shift
         mt = multiply(first, second)
-        so = sumout(mt, var)
-        factors.push(so)
+        factors.push(mt)
+    end
+    product = factors.first
+
+    # sumout w.r.t. ordering
+    ordering.each do |var|
+        product = sumout(product, var)
     end
 
     # normalize
-    factors.each do |f|
-        f = normalize(f)
-    end
+    normalize(product)
 
 end
 
-# Example A->B->C
-f1 = Factor.new("A",[0.9,0.1])
-f2 = Factor.new("AB",[0.9,0.1,0.4,0.6])
-f3 = Factor.new("BC",[0.7,0.3,0.2,0.8])
-factors = [f1, f2, f3]
-queryVars = ["C"]
-ordering = ["A", "B"]
+# Credit card
+
+OC = Factor.new(["OC"],[
+    0.75,
+    1 - 0.75])
+Fraud = Factor.new(["Fraud", "Trav"], [
+    0.01,
+    0.004,
+    1 - 0.01,
+    1 - 0.004])
+Trav = Factor.new(["Trav"], [
+    0.05,
+    1 - 0.05])
+FP = Factor.new(["FP", "Fraud", "Trav"], [
+    0.90,
+    0.10,
+    0.90,
+    0.01,
+    1 - 0.90,
+    1 - 0.10,
+    1 - 0.90,
+    1 - 0.01])
+IP = Factor.new(["IP", "OC", "Fraud"], [
+    0.02,
+    0.01,
+    0.011,
+    0.001,
+    1 - 0.02,
+    1 - 0.01,
+    1 - 0.011,
+    1 - 0.001])
+CRP = Factor.new(["CRP", "OC"], [
+    0.10,
+    0.001,
+    1 - 0.10,
+    1 - 0.001])
+
+# Question 2b
+factors = [Fraud.clone, Trav.clone]
+queryVars = ["Fraud"]
+ordering = ["Trav", "FP", "IP", "OC", "CRP"]
 evidences = {}
-inference(factors, queryVars, ordering, evidences)
-
-
-# populate evidences: maps variable to value
-evidences = Hash.new()
-evidences["A"] = 1
-evidences["B"] = 0
-
-# populate factorList:
-factorList = []
-factorList << Factor.new("C", [0.5,0.5])
-factorList << Factor.new("CS",[0.1, 0.9, 0.5, 0.5])
-factorList << Factor.new("CR",[0.8, 0.2,0.2,0.8])
-factorList << Factor.new("SRW", [0.99, 0.01, 0.9, 0.1, 0.9, 0.1, 0.0, 1.0])
-
-# populate
-
-
+result = inference(factors, queryVars, ordering, evidences)
 
