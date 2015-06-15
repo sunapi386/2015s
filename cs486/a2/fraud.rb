@@ -38,7 +38,7 @@ end
 
 def restrict(factor, variable, value)
 # restricts a variable to some value
-    return factor.clone unless factor.names.include?(variable)
+    return factor unless factor.names.include?(variable)
     f = factor.clone
     idx = f.names.index(variable)
 
@@ -58,29 +58,47 @@ def restrict(factor, variable, value)
     return f
 end
 
-def multiply(f1, f2)
-    common_name = (f1.names & f2.names).join("")
-    # swap f1 with f2 if need be (to mult vars next to each other)
-    # FIXME: this may be buggy
-    name_order1 = ((f1.names + f2.names).rindex(common_name) - (f1.names + f2.names).index(common_name)).abs
-    name_order2 = ((f2.names + f1.names).rindex(common_name) - (f2.names + f1.names).index(common_name)).abs
-    if(name_order1 > name_order2)
-        tmp = f1
-        f1 = f2
-        f2 = tmp
+def multiply(first, second)
+    return first.clone if second.nil?
+    return second.clone if first.nil?
+    # puts "multiply #{first.table.values} #{second.table.values}"
+
+    def is_desired(k1, mapping, k2)
+        # returns true if k1 == k2 given mapping of bits from k1 to k2
+        # e.g. k1 = [X, 0, 1] and k2 = [1, 0, X]
+        # where k1's index: ["X", "A", "B"] and k2's index: ["B", "A", "D"]
+        #                      0,   1,   2                    0,   1 ,   2
+        # mapping would be: {1 => 1, 2 => 0}
+        # we want to return true since k1 == k2 given this index
+        # more ex:
+        # is_desired?([1, 0, 0], [0, 0, 1], {1=>1, 2=>0}) # true
+        # is_desired?([0, 0, 0], [0, 0, 1], {1=>1, 2=>0}) # true
+        # is_desired?([0, 0, 0], [0, 0, 0], {1=>1, 2=>0}) # true
+        # is_desired?([1, 0, 0], [0, 0, 0], {1=>1, 2=>0}) # true
+        # is_desired?([1, 1, 0], [0, 0, 0], {1=>1, 2=>0}) # false
+
+        mapping.each do |from, to|
+            return false unless k1[from] == k2[to]
+        end
+        true
     end
-    new_names = (f1.names + f2.names)
-    new_names.delete_at(new_names.index(common_name))
 
-    n1_idx = f1.names.index(common_name)
-    n2_idx = f2.names.index(common_name)
-    len = common_name.size - 1
+    common_names = (first.names & second.names)
+    new_names = (first.names | second.names)
 
-    new_values = f1.table.collect do |k1, v1|
-        f2.table.collect do |k2, v2|
-            if k1[n1_idx..n1_idx + len] == k2[n2_idx..n2_idx + len]
+    # make mapping of common names from first => second
+    mapping = {}
+    common_names.each do |name|
+        mapping[first.names.index(name)] = second.names.index(name)
+    end
+
+    # for each key1 in first.table, multiply value1 with value2 if key2 is
+    # desired when given a mapping of
+    new_values = first.table.collect do |k1, v1|
+        second.table.collect do |k2, v2|
+            if is_desired(k1, mapping, k2)
                 # puts "#{k1} #{v1} #{k2} #{v2}"
-                (v1 * v2).round(5)
+                (v1 * v2)
             end
         end
     end.flatten.compact
@@ -94,7 +112,7 @@ def sumout(factor, variable)
     f1 = restrict(factor, variable, 1)
     name = factor.names.clone
     # merge the two factors
-    new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+).round(5) }
+    new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+) }
     name.delete_at(name.index(variable))
     Factor.new(name, new_values)
 end
@@ -110,32 +128,52 @@ def inference(factors, queryVars, ordering, evidences)
     raise NoCommonNamesError unless factors.is_a?(Array) &&
                                     queryVars.is_a?(Array) &&
                                     ordering.is_a?(Array) &&
-                                    evidences.is_a?(Hash) &&
+                                    evidences.is_a?(Hash)
 
     # restrict factors w.r.t. evidences
-    evidences.each do |var, value|
-        factors.each do |f|
-            f = restrict(f, var, value)
+    # new_factors = factors.collect {|f| f.clone }
+    evidences.each do |var, val|
+        factors.each_with_index do |f,i|
+            # puts "#{var} #{val} #{f.inspect} #{i}"
+            factors[i] = restrict(factors[i], var, val)
         end
     end
 
     # multiply factors together until single factor left
-    while factors.size > 1
-        first = factors.shift
-        second = factors.shift
-        mt = multiply(first, second)
-        factors.push(mt)
+    # while factors.size > 1
+    #     first = factors.shift
+    #     second = factors.shift
+    #     mt = multiply(first, second)
+    #     factors.push(mt)
+    # end
+    # product = factors.first
+
+    product_factor = nil
+    factors.each do |factor|
+        product_factor = multiply(product_factor, factor)
     end
-    product = factors.first
 
     # sumout w.r.t. ordering
     ordering.each do |var|
-        product = sumout(product, var)
+        # puts "sumout #{product_factor.table.values} #{var}"
+        product_factor = sumout(product_factor, var)
     end
 
     # normalize
-    normalize(product)
+    normalize(product_factor)
 
+end
+
+def print_summary(result, evidences)
+    print "Pr(#{result.names.join(", ")}"
+    print " | " if evidences.size > 0
+    evidences.each_with_index do |e, idx|
+        print "~" if e.last == 0
+        print "#{e.first}"
+        print ", " unless idx == evidences.size - 1
+    end
+    print ") = #{result.table.inspect}\r\n"
+    puts
 end
 
 # Credit card
@@ -175,10 +213,59 @@ CRP = Factor.new(["CRP", "OC"], [
     1 - 0.10,
     1 - 0.001])
 
-# Question 2b
+
+
+# Question 2b Prior
+puts "====== Question 2b prior: Jon Snow Credit Co. "
 factors = [Fraud.clone, Trav.clone]
 queryVars = ["Fraud"]
 ordering = ["Trav", "FP", "IP", "OC", "CRP"]
 evidences = {}
 result = inference(factors, queryVars, ordering, evidences)
+print_summary(result, evidences)
+
+
+# Question 2b Posterior
+puts "====== Question 2b posterior: Nerd makes foreign purchase offline"
+factors = [OC.clone, Fraud.clone, Trav.clone, FP.clone, IP.clone, CRP.clone]
+queryVars = ["Fraud"]
+ordering = ["Trav", "FP", "IP", "OC", "CRP"]
+evidences = {"FP" => 1, "IP" => 0, "CRP" => 1}
+result = inference(factors, queryVars, ordering, evidences)
+print_summary(result, evidences)
+
+# Question 2c
+puts "====== Question 2c: Jon Snow Co. calls, his client is indeed tripping out"
+factors = [Fraud.clone, Trav.clone, FP.clone, IP.clone, CRP.clone, OC.clone]
+queryVars = ["Fraud"]
+ordering = ["Trav", "FP", "IP", "OC", "CRP"]
+evidences = {"FP" => 1, "IP" => 0, "CRP" => 1, "Trav" => 1}
+result = inference(factors, queryVars, ordering, evidences)
+print_summary(result, evidences)
+
+# Question 2d
+puts "====== Question 2d: Credit Card Company has a traitor"
+factors = [Fraud.clone, Trav.clone, FP.clone, IP.clone, CRP.clone, OC.clone]
+queryVars = ["Fraud"]
+ordering = ["Trav", "FP", "IP", "OC", "CRP"]
+evidences = {"IP" => 1}
+result = inference(factors, queryVars, ordering, evidences)
+puts "Before infiltration:"
+print_summary(result, evidences)
+result_before = result
+
+factors = [Fraud.clone, Trav.clone, FP.clone, IP.clone, CRP.clone, OC.clone]
+queryVars = ["Fraud"]
+ordering = ["Trav", "FP", "IP", "OC", "CRP"]
+evidences = {"Trav" => 0, "IP" => 1, "CRP" => 1, "FP" => 0}
+result = inference(factors, queryVars, ordering, evidences)
+puts "After infiltration:"
+print_summary(result, evidences)
+
+
+
+
+
+
+
 
