@@ -125,21 +125,28 @@ def inference(factors, queryVars, ordering, evidences)
                                     queryVars.is_a?(Array) &&
                                     ordering.is_a?(Array) &&
                                     evidences.is_a?(Hash)
+
     # restrict factors w.r.t. evidences
+    # puts "Inference Step 1 (Restrict)"
     evidences.each do |var, val|
         factors.each_with_index do |f,i|
             factors[i] = restrict(factors[i], var, val)
         end
+        # puts "restrict #{var} #{val}: #{factors.map{|f| f.names}}"
     end
     # multiply everything into this factor
-    product_factor = nil
+    # puts "Inference Step 2 (Multiply)"
+    prod_factor = nil
     factors.each do |factor|
-        product_factor = multiply(product_factor, factor)
+        prod_factor = multiply(prod_factor, factor)
+        # puts "product #{prod_factor.names}"
     end
+    # puts "Inference Step 3 (Sumout)"
     ordering.each do |var|
-        product_factor = sumout(product_factor, var)
+        prod_factor = sumout(prod_factor, var)
+        # puts "sumout #{var}: #{prod_factor.names}"
     end
-    normalize(product_factor)
+    normalize(prod_factor)
 end
 
 def print_summary(result, evidences)
@@ -152,4 +159,13 @@ def print_summary(result, evidences)
     end
     print ") = #{result.table.inspect}\r\n"
     puts
+end
+
+def print_change(f1, f2)
+    puts "Changes in fraud probability (rounded 8 decimals):"
+    before = f1.table.values.first
+    after = f2.table.values.first
+    diff = before - after
+    puts "before #{before.round(8)} - after #{after.round(8)} = #{diff.round(8)}"
+    diff.round(8)
 end
