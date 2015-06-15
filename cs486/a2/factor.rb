@@ -5,7 +5,9 @@ require 'matrix'
 # each possible assignment is used to index into a table of probabilities
 # Example:
 # Factor.new("CR",[0.8, 0.2,0.2,0.8])
-# => #<Factor: @names="CR", @table={[1, 1]=>0.8, [1, 0]=>0.2, [0, 1]=>0.2, [0, 0]=>0.8}>
+# => #<Factor:
+#   @names="CR",
+#   @table={[1, 1]=>0.8, [1, 0]=>0.2, [0, 1]=>0.2, [0, 0]=>0.8}>
 class Factor
     attr_accessor :names
     attr_accessor :table
@@ -15,7 +17,9 @@ class Factor
         raise MismatchSizeError unless 2 ** varnames.size == values.size
         @names = varnames
         @table = {}
-        assignments(Math.log2(values.size)).each_with_index { |a, i| @table[a] = values[i] }
+        assignments(Math.log2(values.size)).each_with_index do |a, i|
+            @table[a] = values[i]
+        end
     end
 
     def clone
@@ -112,7 +116,7 @@ def sumout(factor, variable)
     f1 = restrict(factor, variable, 1)
     name = factor.names.clone
     # merge the two factors
-    new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+) }
+    new_values = f0.table.values.zip(f1.table.values).map {|row| row.inject(:+)}
     name.delete_at(name.index(variable))
     Factor.new(name, new_values)
 end

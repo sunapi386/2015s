@@ -60,7 +60,7 @@ result = inference(factors, queryVars, ordering, evidences)
 print_summary(result, evidences)
 
 # Question 2c
-puts "\r\n====== Question 2c: Jon Snow Co. calls, his client is indeed tripping out"
+puts "\r\n====== Question 2c: Jon Snow Co. verfies, his client is out tripping"
 evidences = {"FP" => 1, "IP" => 0, "CRP" => 1, "Trav" => 1}
 result = inference(factors, queryVars, ordering, evidences)
 print_summary(result, evidences)
@@ -83,12 +83,12 @@ print_summary(result, evidences)
 evidences = {"FP" => 1, "IP" => 0, "CRP" => 1}
 fraud = inference(factors, queryVars, ordering, evidences)
 result = sumout(multiply(fraud, Utility), "Fraud")
-puts "\r\n====== Question 3b: Block a nerd's $1000 foreign purchase made offline?"
+puts "\r\n====== Question 3b: Block nerd's $1000 foreign purchase made offline?"
 print_summary(result, evidences)
 
 # Question 3c
 evidences = {"FP" => 1, "IP" => 0, "CRP" => 1, "Trav" => 1}
 fraud = inference(factors, queryVars, ordering, evidences)
 result = sumout(multiply(fraud, Utility), "Fraud")
-puts "\r\n====== Question 3c: Block nerd's $1000 offline foreign purchase knowing travelling?"
+puts "\r\n====== Question 3c: Block same transaction knowing he's travelling?"
 print_summary(result, evidences)
