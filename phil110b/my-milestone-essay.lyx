@@ -1,0 +1,665 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{lastpage}
+\usepackage[ddmmyyyy]{datetime}
+
+\fancyhf{} % clear existing head/footers
+\fancyhead[L]{PHIL110B Milestone Essay}
+\fancyhead[C]{Is it in our self-interest to be good?}
+\fancyhead[R]{\#20387090}
+
+\fancyfoot[L]{\fontsize{8}{8} \today}
+\fancyfoot[R]{\fontsize{8}{8} \thepage\ / \pageref{LastPage}}
+
+\makeatletter
+\let\ps@plain\ps@fancy   % Plain page style = fancy page style
+\makeatother
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize letterpaper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\topmargin 3cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Is it in our self-interest to being good?
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+word count: 1953
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Author
+#20387090
+\end_layout
+
+\begin_layout Date
+June 29, 2015
+\end_layout
+
+\begin_layout Standard
+We explore this problem from the perspective of how a rational agent would
+ act, and their problem solving method.
+ And as a follow up, the diligent reader would notice that there are surely
+ many different methods to solving a problem.
+ Some of those methods would involve being good, and some not.
+ What do we do when it is possible to achieve the same goals through just
+ and unjust means? In response to this, we explore the problem through an
+ example of an unjust man versus a just man, and how it is easier to be
+ good.
+\end_layout
+
+\begin_layout Standard
+The main arguments are drawn from the course textbook
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Shafer-Landau, R.
+ (2014).
+ The Fundamentals of Ethics.
+ Oxford University Press
+\end_layout
+
+\end_inset
+
+, with secondary arguments from an artificial intelligent textbook
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Russell, S.J.
+ & Norvig, P.
+ (2010).
+ Artificial Intelligence: A Modern Approach.
+ Prentice Hall
+\end_layout
+
+\end_inset
+
+, the readings 
+\begin_inset Quotes eld
+\end_inset
+
+The Ring of Gyges
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+Collective Action Problems
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subparagraph*
+Definition of 
+\emph on
+our.
+ 
+\end_layout
+
+\begin_layout Standard
+We define the term 
+\emph on
+our
+\emph default
+ in the question 
+\begin_inset Quotes eld
+\end_inset
+
+is it in our self interest to be good?
+\begin_inset Quotes erd
+\end_inset
+
+ to mean a 
+\emph on
+rational
+\emph default
+ agent.
+ Being 
+\emph on
+rational
+\emph default
+ is a fundamental assumption we make, in the sense that human intelligence
+ is plagued with emotional conflicts, resulting in irrational decisions.
+ Hence it is in our self-interest to avoid acting upon emotional decisions,
+ and avoid its pitfalls by being rational.
+ We also define 
+\emph on
+good
+\emph default
+ later on, once we've established a framework.
+\end_layout
+
+\begin_layout Subsection*
+From a Rational Agent's Perspective
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+First
+\series default
+, let's look at the reasons why it would be in a rational agent's self-interest
+ to be good, in to reap better rewards in the future, and 
+\series bold
+secondly
+\series default
+, why it benefits them more as a whole from being good.
+\end_layout
+
+\begin_layout Paragraph*
+Definition of 
+\emph on
+good.
+\end_layout
+
+\begin_layout Standard
+We're now ready to define what 
+\emph on
+good
+\emph default
+ means, in 
+\begin_inset Quotes eld
+\end_inset
+
+is it in our self-interest to be good
+\begin_inset Quotes erd
+\end_inset
+
+: being 
+\emph on
+good
+\emph default
+ means not being selfish and always maximizing the reward for yourself.
+ Being 
+\emph on
+rational
+\emph default
+ and not necessarily picking the most seemingly beneficial action at the
+ moment.
+\end_layout
+
+\begin_layout Subparagraph*
+Firstly, why it would be in a rational agent's self-interest to be good,
+ due to future rewards.
+\end_layout
+
+\begin_layout Standard
+From our definition of what it means to be good, it follows that we shouldn't
+ be 
+\emph on
+bad
+\emph default
+ (not good), which is being selfish and always picking the action that maximizes
+ the current reward.
+ In other words, being 
+\emph on
+bad
+\emph default
+ is being 
+\emph on
+always greedy
+\emph default
+.
+ Let's start with an important foundation from the course textbook to build
+ upon: the underlying commonalities from different social theories
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+page 215 of The Fundamentals of Ethics
+\end_layout
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Quotation
+The key to understanding them [social negotiation theories], however, lies
+ in the idea that the contractors are, above all, 
+\emph on
+rational and self-interested
+\emph default
+.
+ 
+\end_layout
+
+\begin_layout Quotation
+Being self-interested is not the same thing as being selfish.
+ Being self-interested is having a strong concern for how you well you are
+ faring in life.
+ Being selfish is placing far too much importance on your own well-being
+ relative to the interests of others.
+ 
+\end_layout
+
+\begin_layout Standard
+What it means is that there are future benefits of being good, at a cost
+ of gaining less benefit at-the-moment.
+ That is, we should be 
+\emph on
+self-interested
+\emph default
+ instead of being 
+\emph on
+selfish
+\emph default
+.
+
+\emph on
+ 
+\emph default
+Being selfish maximizes the reward we get 
+\emph on
+now
+\emph default
+ but at a cost in the 
+\emph on
+future.
+ 
+\emph default
+This is also seen in the AI textbooks, through the notion of a reward function
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Also known as an utility function.
+\end_layout
+
+\end_inset
+
+, measuring how much reward was attained from an action.
+ Our self-interest is to choose the action that attains the most reward,
+ i.e.
+ the optimal action to take is to take the action that maximizes the benefit
+ now, and in the future.
+ And 
+\begin_inset Quotes eld
+\end_inset
+
+[r]epeated experiments show that the greedy agent very seldom converges
+ to the optimal policy
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+pg.
+ 839 AIMA 3rd ed.
+\end_layout
+
+\end_inset
+
+.
+ Essentially, the AI textbooks also agree with the idea from the philosophy
+ textbook – the idea that you should be 
+\emph on
+rational and self-interested
+\emph default
+ but not 
+\emph on
+selfish
+\emph default
+.
+ 
+\end_layout
+
+\begin_layout Subparagraph*
+Secondly, why it rewards rational agents more as a group from being good.
+\end_layout
+
+\begin_layout Standard
+In other words, we'll look at how rewards increase if rational agents cooperate
+ with each other and be good.
+ It is easy to understand that when others have good opinions of you and
+ you have the trust of others, this opens doors, and you get a wider choice
+ of options to choose from.
+ offers more rewards for the collective group than being bad (greedy).
+ We can look at what happens when everyone is good, when everyone is good
+ except you, when everyone is bad except you, and lastly, when everyone
+ is bad.
+ To the diligent reader, this indeed looks like a Prisoner's Dilemma.
+ And indeed we will look at Nash Equilibriums.
+ To explore this, we'll look at why behaving badly is a bad strategy in
+ the form of a collective action problem.
+\end_layout
+
+\begin_layout Paragraph*
+Collective Action Problem
+\end_layout
+
+\begin_layout Standard
+In the Collective Action Problem reading
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+p.
+ 366 Constellations Volume 7, Number 3, 2000 Ideology and Irrationality.
+ http://homes.chass.utoronto.ca/~jheath/ideology.pdf Accessed June 3, 2015
+\end_layout
+
+\end_inset
+
+, people seem to behave irrationally because it seems like the best action,
+ at a cost to others.
+ This problem looks like the Prisoner's Dilemma problem, which we analyze
+ from the rational agent perspective.
+ This reading suggests that we are lazy individuals who don't want to be
+ the one putting in the effort to be good, unless everyone is doing good.
+ And if everyone is doing good, then certainly it is going be in our self-intere
+st to sit back and reap the fruits of other's labour.
+ So this seems to be a catch-22 problem.
+ 
+\end_layout
+
+\begin_layout Standard
+While you can reap rewards by being bad, it is only temporarily so.
+ Assuming that people are not fools and stupid (but certainly not always
+ rational agents) is quite reasonable, then it's reasonable to assume others
+ learn eventually of your tactics, and the whole system collapses.
+ There won't be any fruits of labour to reap.
+ Everyone being good is an unstable equilibrium, like the Prisoner's Dilemma.
+ 
+\end_layout
+
+\begin_layout Standard
+Thus it is in our self-interest to be good and help maintain a good, stable
+ equilibrium and cooperate, so that the collective benefit is greater than
+ individual greedy-action benefits, which essentially the Nash equilibrium
+ conclusion.
+\end_layout
+
+\begin_layout Standard
+We argued these points through analysis of rewards to a rational agent,
+ but the keen reader will notice that being bad in a Nash Equilibrium is
+ a dominate strategy.
+ This is true.
+ However, the focus of this section is (cleverly) regarding the rewards
+ to rational agents as a group.
+ Hence it is still a bad strategy.
+ Well why should the rational agent care about other rational agents? The
+ answer to this is that other rational agents are also rational, meaning
+ they know your strategy and so you can't take advantage of them.
+\end_layout
+
+\begin_layout Subsubsection*
+Results.
+\end_layout
+
+\begin_layout Standard
+The reader should see that it is in a rational agent's self-interest to
+ be good because it is more rewarding, for the above two reasons.
+ First, making bad (not good, greedy) decisions decreases future expected
+ rewards.
+ Second, rational agents in a group forms a Nash Equilibrium, which is inherentl
+y unstable, so not being good destroys the cooperation with other rational
+ agents and results in overall less reward.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Archiving Same Goals Through Just vs.
+ Unjust Means 
+\end_layout
+
+\begin_layout Standard
+This section explores the issue of different methods to achieve the same
+ goals, but the methods have a preference order in goodness.
+ 
+\end_layout
+
+\begin_layout Standard
+Roughly translated, being 
+\emph on
+just
+\emph default
+ translates to being 
+\emph on
+good
+\emph default
+, and 
+\emph on
+unjust
+\emph default
+ means up to no good.
+ A reading which fits nicely here is 
+\begin_inset Quotes eld
+\end_inset
+
+The Ring of Gyges
+\begin_inset Quotes erd
+\end_inset
+
+ by Plato
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+“The Ring of Gyges” by Plato - Philosophy Lander.edu http://philosophy.lander.edu/i
+ntro/articles/gyges-a.pdf Accessed June 2, 2015.
+\end_layout
+
+\end_inset
+
+, an example of an unjust man vs.
+ a just man, both meeting their goals.
+ 
+\end_layout
+
+\begin_layout Standard
+In the reading, it explores a sly, unjust man versus a righteous and just
+ man.
+ Both of whom theoretically can achieve the same goals but through different
+ methods.
+ A man of the uttermost injustice and deceit can live a life as good as
+ a just man achieving the same goals through just acts, through perfect
+ deceit.
+ Intuition tells us that archiving the same end results through deceitful
+ means is certainly worse than archiving it through honorable means.
+ And indeed Plato argues for this, as the course textbook summarizes it
+ well
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+page 108 of The Fundamentals of Ethics
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Quotation
+Certainly many immoral people are deeply troubled and unhappy.
+ But others are able to sleep well at night, take pride in a job well done
+ (assassination, theft, betrayal), and find friends within a network of
+ like-minded associates.
+ The bad guys sometimes get away with it, having a lot of fun in the meantime,
+ and never regret the harm they have caused.
+\end_layout
+
+\begin_layout Standard
+Certainly based on pure accomplishments, the two man are the same, since
+ both can accomplish their desired goal through just or unjust means.
+ But the primary difference is that there is a chance for the dishonest
+ man to get caught and (heavily) penalized.
+ And sure, certainly the bad guys sometimes get away with it.
+ A major assumption here is that they can get away with it.
+ 
+\end_layout
+
+\begin_layout Standard
+Let's break the argument into two pieces: suppose he fails sometimes in
+ lying, and suppose he never fails in lying.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+He might fail at deceit.
+\end_layout
+
+\begin_layout Standard
+This is the more realistic argument.
+ Realistically speaking, the underlying assumption is unattainable.
+ No man can deceive the entire life from the moment they were born.
+ With such an outrageous assumption, we might as well assume he was born
+ with everything he could ever want in life.
+ Accomplishing the same goal but taking the unjust method to do it translates
+ to taking more risk, but at a chance to gain higher reward.
+ 
+\end_layout
+
+\begin_layout Standard
+But here is the kicker: there is no difference in the reward.
+ We had assumed the two man achieved the same goal but with different means.
+ Then obviously it makes no sense to pick the riskier path.
+ 
+\emph on
+All the deceitful man has done is save some time and effort.
+
+\emph default
+ Which may be valuable, but at a heavy price if caught.
+\end_layout
+
+\begin_layout Paragraph*
+He never fails at deceit.
+\end_layout
+
+\begin_layout Standard
+Even if we make the (unlikely) assumption the unjust man is capable of maintaini
+ng his composure at all times and not fall out of character, it still doesn't
+ make sense why to take the riskier path as it leads to the same rewards.
+ All he has done is save some time and effort.
+ Seems that this assumption is quite difficult to accomplish (if not impossible)
+ for the average layman.
+ Sure, there may exist those of us that are deceptive enough to carry this
+ out, but they mostly exist for the sake of argument.
+ It is likely the assumption is a fallacy in itself, but cannot be proved.
+\end_layout
+
+\begin_layout Subsubsection*
+Results.
+\end_layout
+
+\begin_layout Standard
+A lot of the arguments explored here are suppositions, and not as solid
+ in logic analysis as from the rational agent perspective.
+ But nevertheless, the fundamental argument in this section is to show that
+ it's much easier to maintain a righteous and just composure than a deceitful
+ and unjust one, as in most people find it difficult to maintain a deceitful
+ composure and accept its risks.
+ Consequently, if we act just, then it is in our self-interest to be good.
+\end_layout
+
+\begin_layout Subsection*
+Conclusion
+\end_layout
+
+\begin_layout Standard
+We've now explored this problem from the perspective of how a rational agent
+ would act, and their problem solving method.
+ It is in a rational agent's self-interest to be good because it is more
+ rewarding, because making bad (not good, greedy) decisions decreases future
+ expected rewards, and not being good destroys the cooperation with other
+ rational agents and results in overall less reward.
+ 
+\end_layout
+
+\begin_layout Standard
+And we've followed up on what do we do when there are many different methods
+ to solving a problem and some involve being good and some not.
+ It seems that the underlying assumption is reasonably invalid, and even
+ if it was true, there isn't much to be gained.
+\end_layout
+
+\begin_layout Standard
+The common result from the analysis suggest being good is an optimal choice.
+ 
+\end_layout
+
+\end_body
+\end_document
