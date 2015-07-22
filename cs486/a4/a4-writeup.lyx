@@ -138,16 +138,49 @@ Prove
 
 \begin_layout Standard
 Prove 
-\begin_inset Formula $\sigma^{-1}(a)=ln(\frac{a}{1-a})$
+\begin_inset Formula $\sigma^{-1}(a)=\ln(\frac{a}{1-a})$
 \end_inset
 
 .
+ Let 
+\begin_inset Formula $y=\sigma$
+\end_inset
+
+, solve for 
+\begin_inset Formula $a$
+\end_inset
+
+ and switch the 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $y$
+\end_inset
+
+ back; the new 
+\begin_inset Formula $y$
+\end_inset
+
+ is the inverse 
+\begin_inset Formula $\sigma^{-1}$
+\end_inset
+
+ function.
+ 
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\sigma^{-1}(a) & = & ln(\frac{a}{1-a})\\
+y & = & \frac{1}{1+e^{-a}}\\
+y+ye^{-a} & = & 1\\
+e^{-a} & = & \frac{1-y}{y}\\
+\ln(e^{-a}) & = & \ln(\frac{1-y}{y})\\
+a & = & -\ln(\frac{1-y}{y})\\
+a & = & \ln(\frac{y}{1-y})\\
+y & = & \ln(\frac{a}{1-a})\\
+\sigma^{-1}(a) & = & \ln(\frac{a}{1-a})
 \end{eqnarray*}
 
 \end_inset
@@ -326,6 +359,11 @@ Note the replacement of
 Is the dataset linearly separable?
 \end_layout
 
+\begin_layout Standard
+It doesn't make sense for the dataset to be linearly seperable.
+ 
+\end_layout
+
 \begin_layout Subsubsection*
 Train and test accuracy
 \end_layout
@@ -354,6 +392,11 @@ Discussion of results in the graph
 
 \begin_layout Subsubsection*
 Which algorithm (threshold perceptron vs neural network) performs best
+\end_layout
+
+\begin_layout Standard
+The logistic activation function has the advantage of being differentiable.
+ 
 \end_layout
 
 \begin_layout Subsubsection*
