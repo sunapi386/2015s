@@ -312,25 +312,6 @@ y_{i}(x,W)=\sigma(\sum_{j}W_{ji}^{(2)}g(\sum_{k}W_{kj}^{(1)}x_{k}+W_{0j}^{(1)})+
 \end_layout
 
 \begin_layout Standard
-Using 
-\begin_inset Formula $g=tanh$
-\end_inset
-
-, the equivalent network is:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-y_{i}(x,W)=\sigma(\sum_{j}W_{ji}^{(2)}(\frac{\tanh(\frac{\sum_{k}W_{kj}^{(1)}x_{k}+W_{0j}^{(1)}}{2})+1}{2})+W_{0i}^{(2)})
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Note the replacement of 
 \begin_inset Formula $g(\sum_{k}W_{kj}^{(1)}x_{k}+W_{0j}^{(1)})$
 \end_inset
@@ -348,6 +329,56 @@ Note the replacement of
 \end_inset
 
 .
+ 
+\end_layout
+
+\begin_layout Standard
+Using 
+\begin_inset Formula $g=\tanh$
+\end_inset
+
+, the equivalent network is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+y_{i}(x,W)=\sigma(\sum_{j}W_{ji}^{(2)}(\frac{\tanh(\frac{\sum_{k}W_{kj}^{(1)}x_{k}+W_{0j}^{(1)}}{2})+1}{2})+W_{0i}^{(2)})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This can be rewritten in form given earlier.
+ Let new vector 
+\begin_inset Formula $V$
+\end_inset
+
+ be a linear transformation of 
+\begin_inset Formula $W$
+\end_inset
+
+.
+ 
+\begin_inset Formula 
+\[
+y_{i}(x,W)=\sigma(\sum_{j}V_{ji}^{(2)}\tanh(\sum_{k}V_{kj}^{(1)}x_{k}+V_{0j}^{(1)})+V_{0i}^{(2)})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $V=2W$
+\end_inset
+
+.x
 \end_layout
 
 \begin_layout Subsection*
@@ -355,25 +386,110 @@ Note the replacement of
  Threshold perceptron learning algorithm
 \end_layout
 
+\begin_layout Standard
+A network with all the inputs connected directly to the outputs is called
+ a single-layer neural network, or a perceptron network.
+ The first thing to notice is that a perceptron network with m outputs is
+ really m separate networks, because each weight affects only one of the
+ outputs.
+ Thus, there will be m sepa- rate training processes.
+\end_layout
+
+\begin_layout Standard
+The activation function g is typically either a hard threshold (Figure 18.17(a)),
+ in which case the unit is called a perceptron, or a logistic function (Figure
+ 18.17(b)), in which case the term sigmoid perceptron is sometimes used.
+\end_layout
+
 \begin_layout Subsubsection*
 Is the dataset linearly separable?
 \end_layout
 
 \begin_layout Standard
-It doesn't make sense for the dataset to be linearly seperable.
- 
+The data is linearly seperable because training converged to weights that
+ classified all of the training data correctly.
+ If it 
+\emph on
+wasn't
+\emph default
+ linearly seperable then the perceptron cannot learn it.
 \end_layout
 
 \begin_layout Subsubsection*
 Train and test accuracy
 \end_layout
 
+\begin_layout Standard
+Trained correctly in 75 iterations Correct predictions: 93.9394% (341/363).
+\end_layout
+
 \begin_layout Subsubsection*
 Final weights of the threshold perceptron
 \end_layout
 
+\begin_layout Standard
+There are 65 total attributes: 64 image attributes plus 1 constant.
+\end_layout
+
+\begin_layout Standard
+Final weights: -31 104 155 -242 -107 -56 -360 -119 80 158 -170 -115 24 -293
+ -505 -294 -87 60 -165 -137 -81 -166 -5 -188 -54 -220 -62 80 -184 -154 -276
+ 16 -225 98 -113 90 18 191 50 -87 50 120 17 658 307 194 -87 401 -170 -321
+ -224 156 498 -148 192 238 49 -117 -327 -230 -180 183 393 53 90
+\end_layout
+
 \begin_layout Subsubsection*
-Source code
+Matlab source code
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/question3.m"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/percept_threshold.m"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/trained_correctly.m"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/predict_using_weights.m"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/f_step.m"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection*

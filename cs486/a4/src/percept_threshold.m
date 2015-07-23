@@ -1,5 +1,5 @@
 function [ weights ] = percept_threshold(weights, data, label)
-% F_PERCEPT_THRESHOLD 
+%F_PERCEPT_THRESHOLD 
 for i = 1:length(label)
     x = data(i,:);
     y = label(i,:);

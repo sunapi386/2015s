@@ -2,18 +2,19 @@
 % Question 3. j53sun (#20387090)
 clear;
 clc;
-
 load trainData.csv;
 load trainLabels.csv;
 load testData.csv;
 load testLabels.csv;
+% Add bias nodes
 data = [ones(length(trainLabels),1), trainData];
-label = trainLabels - min(trainLabels);
 tdata = [ones(length(testLabels),1), testData];
+% Scale the labels to [0,1]
+label = trainLabels - min(trainLabels);
 tlabel = testLabels - min(testLabels);
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-% Threshold Perceptron Learning the weights
+% Threshold Perceptron: learn the weights
 weights = zeros(1,size(data,2));
 for i = 1:500 % limit set arbitrary at 500 (it stops earlier)
     weights = percept_threshold(weights,data,label);
