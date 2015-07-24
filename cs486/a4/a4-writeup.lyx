@@ -374,6 +374,29 @@ y_{i}(x,W)=\sigma(\sum_{j}V_{ji}^{(2)}\tanh(\sum_{k}V_{kj}^{(1)}x_{k}+V_{0j}^{(1
 \end_layout
 
 \begin_layout Standard
+Since 
+\begin_inset Formula $W$
+\end_inset
+
+ is the matrix of weights which were trained using 
+\begin_inset Formula $\sigma(a)$
+\end_inset
+
+, then all of its elements should transformed to use 
+\begin_inset Formula $\tanh(a)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+V=2\sigma(2W)-1
+\]
+
+\end_inset
+
 
 \end_layout
 
@@ -496,12 +519,45 @@ Graph of train and test accuracy as function of number of hidden nodes (5
 \end_layout
 
 \begin_layout Standard
+I produced two graphs, one with regularization of input and one without.
+ The assignment didn't ask for regularization but I include it here because
+ it should work better, but it doesn't.
+\end_layout
+
+\begin_layout Standard
+No regularization
+\end_layout
+
+\begin_layout Standard
 \begin_inset Graphics
 	filename src/nn_acc_vs_hidden.png
+	scale 75
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+94.7 to 96.7.
+\end_layout
+
+\begin_layout Standard
+With regularization
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename src/nn_with_regularization.png
+	scale 75
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+94.5 to 95.8.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -550,13 +606,16 @@ A perceptron network with
 \end_inset
 
  separate training processes.
- So in terms of computation complexity, if 10 digits were to be trained
- on both, it would be quicker on the neural net as there are just additional
- output nodes.
- Whereas for the perceptron networks, there would be 10 runs, costing more
- time to train and space to store the result.
- Also categorization would take longer because there would be 10 queries,
- whereas neural net runs 1 query and takes the maximal likelihood output.
+ 
+\end_layout
+
+\begin_layout Standard
+Training a perceptron is much quicker than neural net.
+ But if many more categories exists, such as 10 digits were to be trained,
+ it would be quicker on the neural net as there are just additional output
+ nodes.
+ Whereas for the perceptron, it might not be able to seperate out the data.
+ 
 \end_layout
 
 \begin_layout Subsubsection*
