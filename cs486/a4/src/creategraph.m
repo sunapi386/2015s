@@ -12,7 +12,7 @@ axes1 = axes('Parent',figure1,'YGrid','on','XGrid','on',...
     'XTickLabel',{'5','6','7','8','9','10','11','12','13','14','15'});
 
 % To preserve the Y-limits of the axes
-ylim(axes1,[90 100]);
+ylim(axes1,[85 105]);
 
 box(axes1,'on');
 hold(axes1,'on');

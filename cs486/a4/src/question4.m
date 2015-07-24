@@ -14,9 +14,9 @@ load testLabels.csv;
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 % Initialize
 input_layer_size = size(trainData, 2); % 8x8 input image of digit
-num_labels = 2;                        % 1 label: either 6 or not 6 (7)
+num_labels = 2;                        % 6 or 7
 alpha = 0.001;                         % learning rate
-max_iter = 10;
+max_iter = 1000;
 options = optimset('MaxIter', max_iter);
 data = trainData;
 tdata = testData;
@@ -83,5 +83,5 @@ end
 % Plot the graph
 
 creategraph(results);
-
+disp(results);
 

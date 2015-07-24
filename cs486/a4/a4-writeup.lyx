@@ -374,11 +374,7 @@ y_{i}(x,W)=\sigma(\sum_{j}V_{ji}^{(2)}\tanh(\sum_{k}V_{kj}^{(1)}x_{k}+V_{0j}^{(1
 \end_layout
 
 \begin_layout Standard
-Where 
-\begin_inset Formula $V=2W$
-\end_inset
 
-.x
 \end_layout
 
 \begin_layout Subsection*
@@ -389,16 +385,13 @@ Where
 \begin_layout Standard
 A network with all the inputs connected directly to the outputs is called
  a single-layer neural network, or a perceptron network.
- The first thing to notice is that a perceptron network with m outputs is
- really m separate networks, because each weight affects only one of the
- outputs.
- Thus, there will be m sepa- rate training processes.
+ 
 \end_layout
 
 \begin_layout Standard
-The activation function g is typically either a hard threshold (Figure 18.17(a)),
- in which case the unit is called a perceptron, or a logistic function (Figure
- 18.17(b)), in which case the term sigmoid perceptron is sometimes used.
+The activation function g is typically either a hard threshold, in which
+ case the unit is called a perceptron, or a logistic function, in which
+ case the term sigmoid perceptron is used.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -502,8 +495,31 @@ Graph of train and test accuracy as function of number of hidden nodes (5
  to 15)
 \end_layout
 
+\begin_layout Standard
+\begin_inset Graphics
+	filename src/nn_acc_vs_hidden.png
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection*
 Discussion of results in the graph
+\end_layout
+
+\begin_layout Standard
+More hidden units seem better in general, but not necessary a non-decreasing
+ increase in accuracy.
+ Having a certain number of hidden nodes comparable to the number of input
+ nodes seem to work better.
+ 
+\end_layout
+
+\begin_layout Standard
+In the best case, 100% training data and 96.7% test data was categorized
+ correct.
+ In the worst case, 99.0% training data and 94.7% test data was correct.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -511,12 +527,101 @@ Which algorithm (threshold perceptron vs neural network) performs best
 \end_layout
 
 \begin_layout Standard
-The logistic activation function has the advantage of being differentiable.
- 
+Neural net works better as it was able to predict more accurately.
+ In the worst case for the neural net, it was still better than the threshold
+ perceptron.
+ But this is expected, as neural net is more complicated and fits data better.
+ Neural net is also able to seperate data that is not linearly seperatable,
+ something a perceptron network cannot do.
+\end_layout
+
+\begin_layout Standard
+A perceptron network with 
+\begin_inset Formula $m$
+\end_inset
+
+ outputs is really 
+\begin_inset Formula $m$
+\end_inset
+
+ separate networks, because each weight affects only one of the outputs.
+ Thus, there will be 
+\begin_inset Formula $m$
+\end_inset
+
+ separate training processes.
+ So in terms of computation complexity, if 10 digits were to be trained
+ on both, it would be quicker on the neural net as there are just additional
+ output nodes.
+ Whereas for the perceptron networks, there would be 10 runs, costing more
+ time to train and space to store the result.
+ Also categorization would take longer because there would be 10 queries,
+ whereas neural net runs 1 query and takes the maximal likelihood output.
 \end_layout
 
 \begin_layout Subsubsection*
-Source code
+Matlab source code
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/question4.m"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/f_nnCostFunction.m"
+
+\end_inset
+
+
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/f_predict.m"
+
+\end_inset
+
+
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/f_sigmoid.m"
+
+\end_inset
+
+
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/f_sigmoidGradient.m"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/fmincg.m"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand verbatiminput
+filename "src/creategraph.m"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
