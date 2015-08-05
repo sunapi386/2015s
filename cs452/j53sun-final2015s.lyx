@@ -1,0 +1,1323 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{lastpage}
+\usepackage[ddmmyyyy]{datetime}
+
+\fancyhf{} % clear existing head/footers
+\fancyhead[L]{CS452 Real-time Programming}
+\fancyhead[C]{}
+\fancyhead[R]{Final Examination}
+
+\fancyfoot[L]{\fontsize{8}{8} \today}
+\fancyfoot[C]{\fontsize{8}{8} \thepage\ / \pageref{LastPage}}
+\fancyfoot[R]{Jason Sun \#20387090 j53sun}
+
+\makeatletter
+\let\ps@plain\ps@fancy   % Plain page style = fancy page style
+\makeatother
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package auto
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize letterpaper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\topmargin 3cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CS452 Real-time Programming 
+\begin_inset Newline newline
+\end_inset
+
+Final Examination
+\end_layout
+
+\begin_layout Author
+Jason Sun 
+\begin_inset Newline newline
+\end_inset
+
+#20387090 
+\begin_inset Newline newline
+\end_inset
+
+(j53sun) 
+\end_layout
+
+\begin_layout Date
+Aug 5, 2015
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Question 1.
+ User State in the Kernel
+\end_layout
+
+\begin_layout Subsubsection*
+1.a In the task descriptor
+\end_layout
+
+\begin_layout Paragraph*
+(i) How big would the task descriptor be (in 32-bit machine words)?
+\end_layout
+
+\begin_layout Standard
+To determine how big the task descriptor has to be, I first look at what
+ is set of information that must be kept track of.
+ I describe what that set should consists of, assuming the kernel itself
+ doesn't use its own data structures to keep track of its tasks
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Example of kernel using its own data structure to keep track of its tasks:
+ the kernel can use its own data structure to map the relation of task ids
+ to their program counters.
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+program counter
+\series default
+.
+ Assuming 32-bit architecture, this would be a 32-bit pointer to the task's
+ current instruction.
+ The content of the PC register would be stored here.
+ Size: 
+\series bold
+exactly 1 word
+\series default
+.
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+stack pointer
+\series default
+.
+ Another 32-bit pointer to the address of where the stack was.
+ Size: 
+\series bold
+exactly 1 word
+\series default
+.
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+task state
+\series default
+.
+ The minimum number of states a task would be ready, blocked (be it send
+ blocked, received blocked, etc).
+ There may be a few more states required in the future, but definitely would
+ fit inside an enum (which is an int).
+ Size: 
+\series bold
+less than 1 word
+\series default
+, because there are a only handful of states a tasks can be in.
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+task id
+\series default
+.
+ This is useful to uniquely identify the task for handling its syscalls.
+ Size: 
+\series bold
+less than 1 word
+\series default
+, because there is a limit on the number of active tasks allowed, due to
+ resource scarcity, and recycling of task id.
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+parent id
+\series default
+.
+ Size: 
+\series bold
+less than 1 word
+\series default
+.
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+priority
+\series default
+.
+ Size: 
+\series bold
+less than 1 word
+\series default
+, because the number of active tasks is less than 1 word (and having too
+ many priorities is not useful).
+\end_layout
+
+\begin_layout Standard
+For those that have size of less than 1 word, it is possible to use bit
+ masks to combine them together.
+ Below, I construct some new fields that stores several fields together.
+\end_layout
+
+\begin_layout Itemize
+I can combine the task 
+\emph on
+state
+\emph default
+, 
+\emph on
+id
+\emph default
+, 
+\emph on
+parent
+\emph default
+, and 
+\emph on
+priority
+\emph default
+ to one word
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+
+For example.
+\end_layout
+
+\begin_layout Plain Layout
+
+Combining them: 
+\end_layout
+
+\begin_layout LyX-Code
+
+(state << TASK_STATE_OFFSET) | 
+\end_layout
+
+\begin_layout LyX-Code
+
+(priority << TASK_PRIORITY_OFFSET) | 
+\end_layout
+
+\begin_layout LyX-Code
+
+(id << TASK_ID_OFFSET).
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+And to access, for example, the task state: 
+\end_layout
+
+\begin_layout LyX-Code
+
+(TASK_STATE_MASK & task->state) >> TASK_STATE_OFFSET.
+\end_layout
+
+\end_inset
+
+.
+ Limiting the task id to 8 bits (
+\begin_inset Formula $2^{8}$
+\end_inset
+
+ max active tasks) means we have other bits to store the task state and
+ priority.
+ Suppose I limit the task state to generous 4 bits (
+\begin_inset Formula $2^{4}$
+\end_inset
+
+ states) and priority to 5 bits (
+\begin_inset Formula $2^{5}$
+\end_inset
+
+ priorities), I still have some left over bits (
+\begin_inset Formula $32-8-4-5)=15$
+\end_inset
+
+.
+ With this, I can store the parent id using 8 bits.
+ 
+\end_layout
+
+\begin_layout Standard
+The sum of size the fields (3 words) plus the size of a struct in C (8 bytes
+ on a 32 bit system
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+http://stackoverflow.com/questions/143025/how-do-i-find-the-size-of-a-struct
+\end_layout
+
+\end_inset
+
+).
+ 8 bytes is 2 words
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+http://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/bitBytes.html
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The total size of the task descriptor would be 5 words.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+(ii) Drawing of what's in the data cache when the FirstUserTask has just
+ been created, and just after it has been activated for the first time.
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+data cache
+\emph default
+, for the ARM920T processor
+\end_layout
+
+\begin_layout Itemize
+has 512 lines of 32 bytes (8-words), and
+\end_layout
+
+\begin_layout Itemize
+a linefill always loads a complete 8-word line, and
+\end_layout
+
+\begin_layout Itemize
+has either random or round-robin replacement 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The ARM920T processor includes a 16KB DCache and a write buffer to reduce
+ the effect of main memory bandwidth and latency on data access performance.
+ The DCache has 512 lines of 32 bytes (8-words), arranged as a 64-way set-associ
+ative cache and uses MVAs translated by CP15 register 13 (see Address translatio
+n) from the ARM9TDMI CPU core.
+ The write buffer can hold up to 16 words of data and four separate addresses.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+The DCache implements allocate-on-read-miss.
+ Random or round-robin replacement can be selected under software control
+ by the RR bit (CP15 register 1, bit 14).
+ Random replacement is selected at reset.
+ A linefill always loads a complete 8-word line.
+\end_layout
+
+\begin_layout Plain Layout
+http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0151c/I1004722.html
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+For clarity, I 
+\end_layout
+
+\begin_layout Itemize
+assume the round-robin replacement method is used (consequently only overwriting
+ the oldest line),
+\end_layout
+
+\begin_layout Itemize
+draw from the most recent on the top to the newest fetch at the bottom,
+\end_layout
+
+\begin_layout Itemize
+draw only the relevant lines (of the 512 lines) that were brought in with
+ respect to the question.
+\end_layout
+
+\begin_layout Standard
+Let each box represent a line of a cache, and each line contains 8 words.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask Task Descriptor (5 words)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph*
+(iii) Repeat of (ii) but assuming as many arguments and variables local
+ to the kernel as you think is reasonable.
+ 
+\end_layout
+
+\begin_layout Standard
+A reasonable number of 
+\end_layout
+
+\begin_layout Paragraph*
+(iv) Assuming tasks have no arguments and no local variables, how many task
+ descriptors can be squeezed into the data cache under best conditions.
+\end_layout
+
+\begin_layout Subsubsection*
+1.b On the stack of the kernel 
+\end_layout
+
+\begin_layout Standard
+(i) Immediately after 
+\end_layout
+
+\begin_layout Subsubsection*
+1.c In my kernel
+\end_layout
+
+\begin_layout Paragraph*
+(i) Some task state must be kept in the kernel.
+ How much was kept in your task descriptor?
+\end_layout
+
+\begin_layout Standard
+This is my task descriptor in my kernel.
+\end_layout
+
+\begin_layout LyX-Code
+typedef struct TaskDescriptor { 
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+int id; 
+\end_layout
+
+\begin_layout LyX-Code
+int parent_id; 
+\end_layout
+
+\begin_layout LyX-Code
+unsigned int *sp; 
+\end_layout
+
+\begin_layout LyX-Code
+enum { ready, send_block, receive_block, reply_block, zombie, } status;
+ 
+\end_layout
+
+\begin_layout LyX-Code
+int *send_id; 
+\end_layout
+
+\begin_layout LyX-Code
+void *send_buf, *recv_buf; 
+\end_layout
+
+\begin_layout LyX-Code
+unsigned int send_len, recv_len; 
+\end_layout
+
+\begin_layout LyX-Code
+struct TaskDescriptor *next; 
+\end_layout
+
+\begin_layout LyX-Code
+char name[TASK_MAX_NAME_SIZE]; 
+\end_layout
+
+\begin_layout LyX-Code
+unsigned int cpu_time_used; 
+\end_layout
+
+\begin_layout LyX-Code
+int originalReceiverId; 
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+} TaskDescriptor;
+\end_layout
+
+\begin_layout Standard
+State of the tasks were implicitly tracked in the kernel by moving around
+ the pointer to the current task descriptor onto different queues.
+ 
+\end_layout
+
+\begin_layout Itemize
+Scheduling system had 32 ready queues (thus 32 priorities).
+ Using a machine word (32 bit), the state of whether a queue contained any
+ waiting tasks were recorded, and the highest priority task scheduled in
+ off the highest bit set.
+ 
+\end_layout
+
+\begin_layout Itemize
+Delayed queue for any tasks that called the Delay syscall, which was a linked
+ list sorted by the closest up-coming delay first.
+\end_layout
+
+\begin_layout Itemize
+Send queue for tasks that had to do Send() message passing.
+\end_layout
+
+\begin_layout Itemize
+Task descriptor contained a task descriptor pointer called 
+\emph on
+next 
+\emph default
+so a daisy-chain of waiting tasks can be queued up.
+ This was for chcecking whether there are senders in the receiver's send
+ queue, and receivers waiting for the send queue.
+ In other words, if a task wanted to talk to another task, by way of Send()
+ or Receive() or Reply(), then they would be queued up on the 
+\emph on
+next
+\emph default
+ field of their desired task.
+\end_layout
+
+\begin_layout Standard
+In my kernel, the task descriptor had only these following fields set during
+ a context switch.
+\end_layout
+
+\begin_layout Itemize
+id, 
+\end_layout
+
+\begin_layout Itemize
+parent id, 
+\end_layout
+
+\begin_layout Itemize
+stack pointer, 
+\end_layout
+
+\begin_layout Itemize
+status.
+ 
+\end_layout
+
+\begin_layout Standard
+The kernel did not explicitly track where the task descriptor is, in terms
+ of what queue for any task descriptor is currently on.
+\end_layout
+
+\begin_layout Standard
+Additionally, if the task was doing a syscall for interprocess communication,
+ the memory locations were stored in the task descriptor for 
+\end_layout
+
+\begin_layout Itemize
+send id pointer, 
+\end_layout
+
+\begin_layout Itemize
+send buffer pointer, 
+\end_layout
+
+\begin_layout Itemize
+receive buffer pointer, 
+\end_layout
+
+\begin_layout Itemize
+send length, 
+\end_layout
+
+\begin_layout Itemize
+receive length.
+\end_layout
+
+\begin_layout Paragraph*
+(ii) For each item of state in your task descriptor, why did you include
+ it?
+\end_layout
+
+\begin_layout Standard
+Information that is changed often and task related are generally included
+ in the task descriptor for easy access and modification.
+ Generally, each item in the task descriptor has something to track about
+ that task, and putting it in the task descriptor makes for better logical
+ data organization (instead of the alternative of not putting it here and
+ tracking these data in another data structure in the kernel, such as a
+ table).
+ For each item, I will comment on why it is included.
+\end_layout
+
+\begin_layout Description
+id,
+\begin_inset space ~
+\end_inset
+
+parent_id; associating a unique id with a task descriptor allows kernel
+ to easily identify which task descriptor this is.
+ Parent information stored here for easy tracking.
+\end_layout
+
+\begin_layout Description
+*sp,
+\begin_inset space ~
+\end_inset
+
+status; Context switching stores the stack pointer here, and may modify
+ the task status, putting it on other task queues.
+ If it weren't stored here, kernel would've needed additional tracking of
+ task data.
+\end_layout
+
+\begin_layout Description
+*send_id,
+\begin_inset space ~
+\end_inset
+
+*send_buf,
+\begin_inset space ~
+\end_inset
+
+*recv_buf,
+\begin_inset space ~
+\end_inset
+
+send_len,
+\begin_inset space ~
+\end_inset
+
+recv_len; Interprocess message communication uses these.
+ Set when needing to communicated between some tasks.
+ Used in conjunction with putting the task descriptor in the right queue.
+\end_layout
+
+\begin_layout Description
+*next; A pointer to other task descriptors allows daisy-chain of task descriptor
+s, for constructing a singly linked list.
+ Message passing 
+\end_layout
+
+\begin_layout Description
+*name; This was the only field that is not used.
+ It was supposed to be for identifying the task to have human readable names.
+\end_layout
+
+\begin_layout Description
+cpu_time_used; Each time a task is scheduled in to be run, to its interruption,
+ the time is added here so an idle time can be calculated by summing all
+ the cpu time all tasks used, and taking a ratio of how much time the idle
+ task ran.
+\end_layout
+
+\begin_layout Description
+originalReceiverId; This is used for messag passing, its purpose is to make
+ sure a sending task can only pass a message to the intended recepient.
+\end_layout
+
+\begin_layout Paragraph*
+(iii) In retrospect would you change what’s in your task descriptor? If
+ so, how? If not, why not?
+\end_layout
+
+\begin_layout Standard
+These are few things I would change.
+\end_layout
+
+\begin_layout Itemize
+The message passing items cluttered the task descriptor, and should be
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Either be combined into a new structure to have the task descriptor look
+ better organized.
+\begin_inset Newline newline
+\end_inset
+
+For example, the new structure could enclose all of these:
+\end_layout
+
+\begin_layout LyX-Code
+struct {
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+int *send_id, send_len, recv_len, originalReceiverId;
+\end_layout
+
+\begin_layout LyX-Code
+void *send_buf, *recv_buf;
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+} ipc_info;
+\end_layout
+
+\begin_layout Itemize
+Or have message passing be tracked elsewhere and not in the task descriptor.
+\begin_inset Newline newline
+\end_inset
+
+One method of doing this is to simply push all this information on the task's
+ stack during the message passing syscall, and modify the status field to
+ send/receive/reply blocked.
+ To use it, the kernel can access from that task's stack.
+ And to remove it, simply move the stack pointer back.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Name isn't used and can be removed.
+ Orignally intended for debugging use, and logging.
+ But our debug messages and asserts contained which file and line the problem
+ originated from, so that was good enough.
+ And I didn't do logging.
+\end_layout
+
+\begin_layout Standard
+Everything else I would leave as-is, because storing those information in
+ the task descriptor makes logical sense – example: I would expect to find
+ the task id in the task descriptor, due to it being relevant data only
+ to that task.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Question 2.
+ Debugging
+\end_layout
+
+\begin_layout Subsubsection*
+2.a.
+ Symptoms of bugs.
+ 
+\end_layout
+
+\begin_layout Standard
+These characteristics are often associated with ease or difficulty because
+ a bug with one
+\end_layout
+
+\begin_layout Standard
+Easy bugs
+\end_layout
+
+\begin_layout Enumerate
+Occurs frequently because the 
+\end_layout
+
+\begin_layout Standard
+Hard bugs
+\end_layout
+
+\begin_layout Subsubsection*
+2.b IRQ bugs.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+2.c Link register bugs.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Question 5.
+ Destroy
+\end_layout
+
+\begin_layout Subsubsection*
+5.a.
+ Destroy()
+\end_layout
+
+\begin_layout Paragraph*
+(i) List all the internal adjustments that the kernel must do to ensure
+ consistency with the task never running again.
+ 
+\end_layout
+
+\begin_layout Standard
+The kernel must ensure the task is not run again, and recycle any resources
+ the task used.
+ 
+\end_layout
+
+\begin_layout Standard
+Here is a list of the resouces a task uses.
+\end_layout
+
+\begin_layout Itemize
+Stack.
+ Whatever memory that was reserved for the task's stack can be marked as
+ not-used.
+ Destroying this simply marks the space as free.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+(ii) How is Exit() is related to Destroy() and Suicide()?
+\end_layout
+
+\begin_layout Standard
+Exit is similar to Destroy and Suicide because it is also a syscall that
+ tells the kernel that the resources given to this task can be freed up
+ and recycled.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+5.b.
+ Suicide()
+\end_layout
+
+\begin_layout Paragraph*
+(i) Describe when Suicide() could work and when it can’t.
+\end_layout
+
+\begin_layout Standard
+Suicide(), implemented as the idle task doing a Send() message to the desired
+ task to be removed, would only work if the task 
+\end_layout
+
+\begin_layout Itemize
+does Receive() and 
+\end_layout
+
+\begin_layout Itemize
+listens for a suicide message and
+\end_layout
+
+\begin_layout Itemize
+it is possible for the said task to be receive blocked (and not, say, in
+ an infinite loop).
+ 
+\end_layout
+
+\begin_layout Standard
+Suicide() does not work unless all the above requirements are met
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Example: does not work if task is a courier, doing only Send() calls.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph*
+(ii) Assuming Destroy() to be available how would Suicide() be implemented?
+ 
+\end_layout
+
+\begin_layout Standard
+Assuming Destroy() is available, suicide can be implemented as a goto the
+ cleanup section of the code, doing whatever cleanup necessary, and calling
+ Destroy() on any children it may have created and wish to destroy, and
+ Exit() itself.
+ Pseudocode below.
+\end_layout
+
+\begin_layout LyX-Code
+FOREVER {
+\end_layout
+
+\begin_deeper
+\begin_layout LyX-Code
+Receive(sendertid, message, sizeof(message));
+\end_layout
+
+\begin_layout LyX-Code
+switch(message.type) {
+\end_layout
+
+\begin_layout LyX-Code
+case SUICIDE: goto cleanup;
+\end_layout
+
+\begin_layout LyX-Code
+}
+\end_layout
+
+\end_deeper
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout LyX-Code
+cleanup: // a label
+\end_layout
+
+\begin_layout LyX-Code
+Destroy(childtid); // destroy any children it may have
+\end_layout
+
+\begin_layout LyX-Code
+Exit();
+\end_layout
+
+\begin_layout Subsubsection*
+5.c.
+ Children
+\end_layout
+
+\begin_layout Paragraph*
+(i) When is destroying the children is a good idea?
+\end_layout
+
+\begin_layout Standard
+If the children contains any references to the task that was destroyed,
+ then the children no longer operates in a valid context and should be destroyed
+ as well.
+ 
+\end_layout
+
+\begin_layout Standard
+For example, a child task that replies to the parent with some computation
+ result the parent had asked.
+ This child should be destroyed, because it would be trying to reply to
+ a non-existant task after its parent was destroyed.
+ 
+\end_layout
+
+\begin_layout Standard
+Suppose we use a static variable to keep track of the task id the child
+ task should reply to.
+ If the static variable was reassigned after the destroy, it would not a
+ good idea to that static variable replying, because this introduces race
+ conditions.
+ Even if successfully executed, the content of the reply message might no
+ longer be valid.
+ Furthermore, the task might not be re-created, in which case the child
+ (who was not destroyed) is blocked forever.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+(ii) Give an example of a task configuration when destroying the children
+ is not desirable.
+ 
+\end_layout
+
+\begin_layout Standard
+If the child task is expected to operate independently of whether the parent
+ exists or not
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Consequently the children must not refer to the parent task.
+\end_layout
+
+\end_inset
+
+, then it is not desirable to destroy the child.
+ 
+\end_layout
+
+\begin_layout Standard
+For example, a task may be created and used as an in-memory-database, to
+ sequentialize read and writes (say, to the track data structure), then
+ it makes no sense to destroy this task simply because its parent was destroyed.
+\end_layout
+
+\begin_layout Paragraph*
+(iii) Because your system has an upper limit on the number of live tasks,
+ you can bound above the amount of time required to permanently inactivate
+ a task and its children.
+ Calculate the worst case running time for inactivating a task and its children.
+\end_layout
+
+\begin_layout Standard
+The worst possible run time is the result of calling destroy on the root
+ task.
+ Suppose all the tasks are created in a tree (graph) manner.
+ Then calling destroy on its root means destroying all the tasks in the
+ entire tree.
+ The size of the tree is bounded to be the maximum number of live tasks
+ 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+I argue the worst setup occurs when each task creates a child, whereby destroyin
+g that task incurs a destroy to its child, causing a daisy-chain of destroy
+ syscalls.
+ I argue this is worse than the other limit-case, of destroying 
+\begin_inset Formula $m$
+\end_inset
+
+ tasks individually, and each task is not related to others.
+ 
+\end_layout
+
+\begin_layout Standard
+My intuition is there is an reduction in the task search space – unless
+ the task id lookup to its task descriptor entry is via a hashmap (or some
+ other constant lookup method
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+In my kernel, task descriptors are stored in a table, and the task-id stored
+ in the task descriptor is bit masked together with the index into that
+ table, thus no lookup to the task descriptor index is required.
+\end_layout
+
+\end_inset
+
+).
+ Because calling destroy on a child requires the kernel to lookup the task
+ descriptor, it is more costly to do 
+\begin_inset Formula $m$
+\end_inset
+
+ lookups than none at all, as in the case of each task not related to others.
+\end_layout
+
+\begin_layout Standard
+In the worst case, having to do lookups, for each of the 
+\begin_inset Formula $m$
+\end_inset
+
+ tasks there could be a potential message passing overhead to pass a message
+ to its children.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+MaxTimeRequired=m(MaxDestroyTime+MaxMessagePassingOverhead)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $MaxDestroyTime$
+\end_inset
+
+ is the maximum time to destroy a task.
+ The time it takes to destroy a task is the cost of marking the stack that
+ used as free-to-use.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $MaxMessagePassingOverhead$
+\end_inset
+
+ is a bound on the lookup time to find the task descriptor corresponding
+ to the child's task id.
+\end_layout
+
+\begin_layout Subsubsection*
+5.d.
+ Resource reclamation
+\end_layout
+
+\begin_layout Paragraph*
+(i) Some resource reclamation can be done by the kernel.
+ What are the resources and how are they made available for future use?
+ 
+\end_layout
+
+\begin_layout Standard
+Resources that tasks themselves cannot keep track of should be reclaimed
+ by the kernel.
+ These resources could be the 
+\end_layout
+
+\begin_layout Itemize
+stack memory space for a task that was destroyed, or
+\end_layout
+
+\begin_layout Itemize
+tasks that might be blocked on a message passing to the task that was destroyed
+ – in which these tasks can now be considered dead, since they'll never
+ be unblocked (unless the task destroyed was destroyed was replaced with
+ another of the same task id, or the kernel could wake up those blocked
+ tasks and fail their syscall).
+\end_layout
+
+\begin_layout Standard
+The freed up resources can go into a queue, so to keep track of what resources
+ are available to assign to newly created tasks.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+(ii) If memory is to be zeroed, you probably don’t want the kernel doing
+ that.
+ How might it be done? 
+\end_layout
+
+\begin_layout Standard
+Indeed having kernel zero (a possibly large chunk of) memory is undesirable
+ due to real-time constraints, so to be out of the kernel mode as soon as
+ possible.
+ 
+\end_layout
+
+\begin_layout Standard
+A zeroing task can be created initally by the kernel and thus be invisible
+ to user tasks (or the first-user task can create it).
+ Optionally, the idling task can be given the duty of zeroing, but this
+ could be undesirable because of its low priority, because we might want
+ the zeroing to happen as soon as possible so that task can created faster.
+ 
+\end_layout
+
+\begin_layout Standard
+This zeroing task would be blocked and waiting for a message of what address
+ to zero (and how long) passed to it by a kernel.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+(iii) There are resources about which the kernel knows nothing, track reservatio
+ns for example.
+ How might these resources be freed? 
+\end_layout
+
+\begin_layout Standard
+These resources could be kept in the stack of a seperate task, for the sole
+ purpose of acting as a simple in-memory database.
+ Destroying the task is the equivalent of removing the resource.
+ 
+\end_layout
+
+\begin_layout Standard
+For a large structure such as the track data, it would be useful to extend
+ a new form of the Create() syscall to also take a desired a stack size
+ to be allocated
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+And better memory management.
+ In my kernel, memory is chunked into 128 equally sized pieces.
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Keeping resources in a task has the added benefit of atomicity guarantee,
+ since reads/writes can to be serialized using the Send/Receive syscalls.
+\end_layout
+
+\end_body
+\end_document
