@@ -9,12 +9,12 @@
 
 \fancyhf{} % clear existing head/footers
 \fancyhead[L]{CS452 Real-time Programming}
-\fancyhead[C]{}
+\fancyhead[C]{Spring 2015}
 \fancyhead[R]{Final Examination}
 
-\fancyfoot[L]{\fontsize{8}{8} \today}
+\fancyfoot[R]{\fontsize{8}{8} \today}
 \fancyfoot[C]{\fontsize{8}{8} \thepage\ / \pageref{LastPage}}
-\fancyfoot[R]{Jason Sun \#20387090 j53sun}
+\fancyfoot[L]{Jason Sun 20387090 j53sun}
 
 \makeatletter
 \let\ps@plain\ps@fancy   % Plain page style = fancy page style
@@ -41,6 +41,7 @@
 \output_sync 0
 \bibtex_command default
 \index_command default
+\float_placement H
 \paperfontsize default
 \spacing single
 \use_hyperref false
@@ -94,6 +95,10 @@ CS452 Real-time Programming
 \end_inset
 
 Final Examination
+\begin_inset Newline newline
+\end_inset
+
+Spring 2015
 \end_layout
 
 \begin_layout Author
@@ -101,11 +106,11 @@ Jason Sun
 \begin_inset Newline newline
 \end_inset
 
-#20387090 
+20387090 
 \begin_inset Newline newline
 \end_inset
 
-(j53sun) 
+j53sun
 \end_layout
 
 \begin_layout Date
@@ -128,7 +133,7 @@ Question 1.
 1.a In the task descriptor
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (i) How big would the task descriptor be (in 32-bit machine words)?
 \end_layout
 
@@ -142,7 +147,11 @@ status collapsed
 
 \begin_layout Plain Layout
 Example of kernel using its own data structure to keep track of its tasks:
- the kernel can use its own data structure to map the relation of task ids
+ 
+\end_layout
+
+\begin_layout Plain Layout
+The kernel can use its own data structure to map the relation of task ids
  to their program counters.
 \end_layout
 
@@ -220,7 +229,7 @@ The
 parent id
 \series default
 .
- Size: 
+ Size: also 
 \series bold
 less than 1 word
 \series default
@@ -248,7 +257,9 @@ For those that have size of less than 1 word, it is possible to use bit
 \end_layout
 
 \begin_layout Itemize
-I can combine the task 
+I can 
+\series bold
+combine the task 
 \emph on
 state
 \emph default
@@ -270,12 +281,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-For example.
-\end_layout
-
-\begin_layout Plain Layout
-
-Combining them: 
+For example, combining them: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -306,6 +312,8 @@ And to access, for example, the task state:
 
 \end_inset
 
+ – I will call this word SIPP
+\series default
 .
  Limiting the task id to 8 bits (
 \begin_inset Formula $2^{8}$
@@ -331,24 +339,25 @@ And to access, for example, the task state:
 \end_layout
 
 \begin_layout Standard
-The sum of size the fields (3 words) plus the size of a struct in C (8 bytes
- on a 32 bit system
+The total size of the task descriptor would be 3 words, as a struct has
+ no size in C
 \begin_inset Foot
 status collapsed
 
 \begin_layout Plain Layout
-http://stackoverflow.com/questions/143025/how-do-i-find-the-size-of-a-struct
+Source: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://stackoverflow.com/questions/3849334/sizeof-empty-structure-is-0-in-c-and-1
+-in-c-why
 \end_layout
 
 \end_inset
 
-).
- 8 bytes is 2 words
-\begin_inset Foot
-status collapsed
 
-\begin_layout Plain Layout
-http://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/bitBytes.html
 \end_layout
 
 \end_inset
@@ -356,12 +365,7 @@ http://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/bitBytes.html
 .
 \end_layout
 
-\begin_layout Standard
-The total size of the task descriptor would be 5 words.
- 
-\end_layout
-
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (ii) Drawing of what's in the data cache when the FirstUserTask has just
  been created, and just after it has been activated for the first time.
 \end_layout
@@ -371,7 +375,7 @@ The
 \emph on
 data cache
 \emph default
-, for the ARM920T processor
+, for the ARM920T processor 
 \end_layout
 
 \begin_layout Itemize
@@ -383,7 +387,7 @@ a linefill always loads a complete 8-word line, and
 \end_layout
 
 \begin_layout Itemize
-has either random or round-robin replacement 
+has either random or round-robin replacement
 \begin_inset Foot
 status collapsed
 
@@ -406,7 +410,25 @@ The DCache implements allocate-on-read-miss.
 \end_layout
 
 \begin_layout Plain Layout
+Source: 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
 http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0151c/I1004722.html
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+Section: 
+\emph on
+Home > Caches, Write Buffer, and Physical Address TAG (PA TAG) RAM > DCache
+ and write buffer.
 \end_layout
 
 \end_inset
@@ -416,7 +438,55 @@ http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0151c/I1004722.ht
 \end_layout
 
 \begin_layout Standard
-For clarity, I 
+When the data is not aligned with the size of a line of cache, the compiler
+ for ARM architectures aligns data to closest word boundary
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+ARM9 doesn't allow unaligned loads, so the compiler makes it word aligned.
+\end_layout
+
+\begin_layout Plain Layout
+The compiler writers chose to allow the declaration of types shorter than
+ a word (chars and shorts) but aligned all structures to a word boundary
+ to increase performance when accessing these items.
+\end_layout
+
+\begin_layout Plain Layout
+
+\size footnotesize
+Source: 
+\size default
+
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.aleph1.co.uk/chapter-10-arm-structured-alignment-faq
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ Meaning the compiler pads things up to size, so anything smaller is still
+ a word.
+ 
+\end_layout
+
+\begin_layout Standard
+Since it's an 8 word cache line, the bottom 3 bits of any address are ignored,
+ so 8 words are fetched in the neighbourhood of whatever was accessed.
+\end_layout
+
+\begin_layout Standard
+For clarity in the drawing, I 
 \end_layout
 
 \begin_layout Itemize
@@ -429,17 +499,51 @@ draw from the most recent on the top to the newest fetch at the bottom,
 \end_layout
 
 \begin_layout Itemize
-draw only the relevant lines (of the 512 lines) that were brought in with
- respect to the question.
+draw only the relevant lines (of the 512 total lines) that were brought
+ in with respect to the question.
 \end_layout
 
 \begin_layout Standard
-Let each box represent a line of a cache, and each line contains 8 words.
+I trace the path of execution of what happens from the moment the kernel
+ creates the FirstUserTask, to its activation.
+ Then I figure out for each of the execution step, what would've been an
+ access to the data cache.
 \end_layout
 
 \begin_layout Standard
+Execution steps.
+\end_layout
+
+\begin_layout Enumerate
+Access task descriptor
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="1">
+<lyxtabular version="3" rows="3" columns="1">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <row>
@@ -447,7 +551,7 @@ Let each box represent a line of a cache, and each line contains 8 words.
 \begin_inset Text
 
 \begin_layout Plain Layout
-FirstUserTask Task Descriptor (5 words)
+FirstUserTask Task Descriptor (3 words)
 \end_layout
 
 \end_inset
@@ -458,7 +562,7 @@ FirstUserTask Task Descriptor (5 words)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Kernel 
 \end_layout
 
 \end_inset
@@ -469,62 +573,7 @@ FirstUserTask Task Descriptor (5 words)
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+...
 \end_layout
 
 \end_inset
@@ -537,34 +586,1127 @@ FirstUserTask Task Descriptor (5 words)
 
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(1.a.ii) Data cache when FirstUserTask has just been created and just activated
+ for the first time.
+ 
+\begin_inset Newline newline
+\end_inset
+
+Each box represent a line of a cache, and each line contains 8 words.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
 (iii) Repeat of (ii) but assuming as many arguments and variables local
  to the kernel as you think is reasonable.
  
 \end_layout
 
 \begin_layout Standard
-A reasonable number of 
+I think reasonable number of arguments/variables local to the kernel is
+ probably around 5, as that is how many our kernel main loop had.
+ 
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Standard
+Execution steps.
+\end_layout
+
+\begin_layout Enumerate
+Creating local args/vars.
+\end_layout
+
+\begin_layout Enumerate
+Access task descriptor.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask Task Descriptor (3 words)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Local args/vars (5 words)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Kernel 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+...
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(1.a.iii) Data cache, FirstUserTask created activated for the first time,
+ with local args/vars.
+ 
+\begin_inset Newline newline
+\end_inset
+
+Each box represent a line of a cache, and each line contains 8 words.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
 (iv) Assuming tasks have no arguments and no local variables, how many task
  descriptors can be squeezed into the data cache under best conditions.
+\end_layout
+
+\begin_layout Standard
+The task descriptor is 3 words, and a line of cache is 8 words.
+ At most two task descriptors can fit in one line, using 6 words.
+ Using 
 \end_layout
 
 \begin_layout Subsubsection*
 1.b On the stack of the kernel 
 \end_layout
 
+\begin_layout Subsubsection*
+(i) Draw the kernel stack immediately after FirstUserTask is created during
+ kernel initialization and just after it has been activated for the first
+ time.
+ 
+\end_layout
+
 \begin_layout Standard
-(i) Immediately after 
+Execution:
+\end_layout
+
+\begin_layout Enumerate
+Kernel pushes FirstUserTask task descriptor on its stack.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: SIPP
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+SIPP (reminder to earlier definition): refers to a word that contains the
+ task's state, id, parent, and priority
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Other kernel things
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(1.b.i) FirstUserTask just created and activated.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+(ii) Draw the stack of the kernel just after FirstUserTask re-enters the
+ kernel to Create the first task, First, in the program to be run, and again
+ immediately after the task has been created.
+ 
+\end_layout
+
+\begin_layout Standard
+Execution:
+\end_layout
+
+\begin_layout Enumerate
+Kernel pushes FirstUserTask task descriptor on its stack.
+\end_layout
+
+\begin_layout Enumerate
+Kernel re-enters to create the First task.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Kernel re-entry
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Other kernel things
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(1.b.ii) Before creating First.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Execution:
+\end_layout
+
+\begin_layout Enumerate
+Kernel pushes FirstUserTask task descriptor on its stack.
+\end_layout
+
+\begin_layout Enumerate
+Kernel re-enters to create the First task.
+\end_layout
+
+\begin_layout Enumerate
+Immediately after the task has been created
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Other kernel things
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(1.b.ii) After creating First.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+(iii) Assuming that First is the same priority as FirstUserTask, show the
+ stack immediately after the next task activation.
+ 
+\end_layout
+
+\begin_layout Standard
+Execution:
+\end_layout
+
+\begin_layout Enumerate
+Kernel pushes FirstUserTask task descriptor on its stack.
+\end_layout
+
+\begin_layout Enumerate
+Kernel re-enters to create the First task.
+\end_layout
+
+\begin_layout Enumerate
+Immediately after the task has been created
+\end_layout
+
+\begin_layout Enumerate
+Activate First task, removing it from tip of kernel stack.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Other kernel things
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(1.b.iii) First just activated.
+ 
+\begin_inset Newline newline
+\end_inset
+
+First task is not on the kernel stack because it is running (kernel isn't
+ running).
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+(iv) Suppose that whatever task was activated creates Second, equal in priority
+ to First.
+ Draw the kernel stack, before and after creation.
+ 
+\end_layout
+
+\begin_layout Standard
+Execution:
+\end_layout
+
+\begin_layout Enumerate
+Kernel pushes FirstUserTask task descriptor on its stack.
+\end_layout
+
+\begin_layout Enumerate
+Kernel re-enters to create the First task.
+\end_layout
+
+\begin_layout Enumerate
+Immediately after the task has been created
+\end_layout
+
+\begin_layout Enumerate
+Activate First task, removing it from tip of kernel stack.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Other kernel things
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(1.b.iv) Before creation of Second.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Execution:
+\end_layout
+
+\begin_layout Enumerate
+Kernel pushes FirstUserTask task descriptor on its stack.
+\end_layout
+
+\begin_layout Enumerate
+Kernel re-enters to create the First task.
+\end_layout
+
+\begin_layout Enumerate
+Immediately after the task has been created
+\end_layout
+
+\begin_layout Enumerate
+Activate First task, removing it from tip of kernel stack.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="1">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Second: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Second: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Second: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FirstUserTask: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Other kernel things
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+(1.b.iv) After creation of Second.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+(v) What happens in the long run if no more task creation occurs? If much
+ task creation occurs? If much task creation and destruction occurs? 
+\end_layout
+
+\begin_layout Itemize
+When no more task creation occurs, the kernel stack stops growing in size.
+ 
+\end_layout
+
+\begin_layout Itemize
+When much task creation occurs, the stack keeps growing.
+\end_layout
+
+\begin_layout Itemize
+When much task creation and destruction occurs, the stack moves up and down
+ a lot.
+\end_layout
+
+\begin_layout Subsubsection*
+(vi) Can these problems be overcome?
+\end_layout
+
+\begin_layout Standard
+Yes.
+ A table mapping task and their respective storage (which otherwise would've
+ been on the kernel's stack) can be set aside.
+\end_layout
+
+\begin_layout Itemize
+It can be in static space, pre-allocated by the compiler.
+ This would mean it's not going to be on the kernel's stack.
+ 
+\end_layout
+
+\begin_layout Itemize
+It can be on kernel's stack, then the kernel could use a chunk of space
+ (from its stack).
+ Benefit would be the kernel's stack is not moving up and down.
 \end_layout
 
 \begin_layout Subsubsection*
 1.c In my kernel
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (i) Some task state must be kept in the kernel.
  How much was kept in your task descriptor?
 \end_layout
@@ -600,7 +1742,11 @@ int *send_id;
 \end_layout
 
 \begin_layout LyX-Code
-void *send_buf, *recv_buf; 
+void *
+\lang canadian
+send
+\lang english
+_buf, *recv_buf; 
 \end_layout
 
 \begin_layout LyX-Code
@@ -657,7 +1803,7 @@ Task descriptor contained a task descriptor pointer called
 next 
 \emph default
 so a daisy-chain of waiting tasks can be queued up.
- This was for chcecking whether there are senders in the receiver's send
+ This was for checking whether there are senders in the receiver's send
  queue, and receivers waiting for the send queue.
  In other words, if a task wanted to talk to another task, by way of Send()
  or Receive() or Reply(), then they would be queued up on the 
@@ -719,7 +1865,7 @@ send length,
 receive length.
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (ii) For each item of state in your task descriptor, why did you include
  it?
 \end_layout
@@ -797,11 +1943,11 @@ cpu_time_used; Each time a task is scheduled in to be run, to its interruption,
 \end_layout
 
 \begin_layout Description
-originalReceiverId; This is used for messag passing, its purpose is to make
- sure a sending task can only pass a message to the intended recepient.
+originalReceiverId; This is used for message passing, its purpose is to
+ make sure a sending task can only pass a message to the intended recipient.
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (iii) In retrospect would you change what’s in your task descriptor? If
  so, how? If not, why not?
 \end_layout
@@ -857,7 +2003,7 @@ One method of doing this is to simply push all this information on the task's
 \end_deeper
 \begin_layout Itemize
 Name isn't used and can be removed.
- Orignally intended for debugging use, and logging.
+ Originally intended for debugging use, and logging.
  But our debug messages and asserts contained which file and line the problem
  originated from, so that was good enough.
  And I didn't do logging.
@@ -889,20 +2035,259 @@ Question 2.
 \end_layout
 
 \begin_layout Standard
-These characteristics are often associated with ease or difficulty because
- a bug with one
+Consider the sequence of steps in debugging a bug.
+ At each step of debugging, a difficult bug hides itself and makes it difficult
+ for you to proceed to the next step of debugging.
+ The hardest steps of fixing bugs are generally 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Briefly summarized from: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.makinggoodsoftware.com/2009/06/14/7-steps-to-fix-an-error/
 \end_layout
 
-\begin_layout Standard
-Easy bugs
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ to:
 \end_layout
 
 \begin_layout Enumerate
-Occurs frequently because the 
+
+\series bold
+Error identification.
+
+\series default
+ The expected behaviour is wrong, and it is reproducible.
+ 
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Error location.
+
+\series default
+ Once an error is known to exist, figure out the minimum set of code that
+ is responsible.
 \end_layout
 
 \begin_layout Standard
-Hard bugs
+Each of the eight qualities given in question associates with somewhere
+ in the bug fixing step.
+ Characteristics have an association with one (or more) of the debugging
+ steps.
+ I explain, with examples, why each of the eight characteristics are associated
+ with ease or difficulty.
+\end_layout
+
+\begin_layout Enumerate
+A 
+\series bold
+frequently
+\series default
+ occurring bug is easy because it contributes to 
+\emph on
+identifying
+\emph default
+ the existence of an error.
+ 
+\begin_inset Newline newline
+\end_inset
+
+For example, incorrectly drawing the time on screen.
+ 
+\begin_inset Newline newline
+\end_inset
+
+Because the clock is updated so frequently, any input mistakes or formatting
+ mistakes would be noticed immediately.
+\end_layout
+
+\begin_layout Enumerate
+An 
+\series bold
+infrequently
+\series default
+ bug is difficult to identify the existence of the bug.
+ 
+\begin_inset Newline newline
+\end_inset
+
+For example, for our nameserver, I had a bug in the WhoIs call handling.
+ The nameserver would look through its registration for the requested name,
+ and send a reply when it found it, then break.
+ However, this break only breaks out of the local linear-scan, and not the
+ case statement.
+ 
+\begin_inset Newline newline
+\end_inset
+
+This bug was hard to find because the WhoIs is called so infrequently (only
+ during initialization code).
+ The extra reply went unnoticed for a long time, until we noticed someone
+ was sending an extra reply to our couriers.
+\end_layout
+
+\begin_layout Enumerate
+A 
+\series bold
+predictable
+\series default
+ bug is easy because it would be reproducible, allowing for easy 
+\emph on
+identification
+\emph default
+ and location of the bug.
+ 
+\begin_inset Newline newline
+\end_inset
+
+For example, a missing break statement in the parser.
+ The deterministic finite state automaton simply goes to the next state,
+ causing that command to fail to parse.
+ So the same command keeps failing to parse, which is predictably buggy.
+\end_layout
+
+\begin_layout Enumerate
+A 
+\series bold
+irregularly
+\series default
+ occurring bug is difficult because the code does not get run often.
+ This is related to an infrequent bug, because the irregular bug shows up
+ when the infrequently running code (that contains the bug) runs.
+\begin_inset Newline newline
+\end_inset
+
+For example, races on input output to the train control module.
+ Because the train control module is so slow (relative to the ARM processor),
+ there may result in 
+\emph on
+multi-track drift
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Multi-track drift occurs when a train travels over a switch.
+ The front wheels of the train passed the switch, but before the back wheels
+ pass the switch, the switch changes direction.
+ This causes the front and back wheels to be on both sides of a branch.
+\end_layout
+
+\end_inset
+
+
+\emph default
+.
+ This is irregular because most of the time the train IO is timed correctly,
+ but sometimes the location of the train is estimated incorrectly and a
+ command was sent too quick.
+\end_layout
+
+\begin_layout Enumerate
+An 
+\series bold
+immediate crash
+\series default
+ bug is easy to 
+\emph on
+identify
+\emph default
+ because clearly something went wrong (crashed).
+ 
+\begin_inset Newline newline
+\end_inset
+
+For example, incorrectly pushing arguments onto a task's stack during a
+ context switch can cause the task to crash upon switching back to that
+ task's context.
+ The result is usually immediate, as context switches happen very often.
+\end_layout
+
+\begin_layout Enumerate
+An 
+\series bold
+non-immediate
+\series default
+ crash bug is difficult to 
+\emph on
+identify
+\emph default
+ because it's not obvious 
+\emph on
+when
+\emph default
+ the bug was triggered, consequently, not clear 
+\emph on
+who
+\emph default
+ triggered it.
+ 
+\begin_inset Newline newline
+\end_inset
+
+For example, a buffer overflow.
+ When the rate of consuming elements from the buffer is slower than the
+ rate which elements are added to the buffer, the buffer overflows eventually.
+ It takes time to fill up the buffer, so the crash is non-immediate.
+ It's hard to identify this crash was due to an overflow, because it crashes
+ later, so one has to back track many sequence of actions to find the source
+ of the problem.
+\end_layout
+
+\begin_layout Enumerate
+A bug producing 
+\series bold
+same symptoms
+\series default
+ is easy to 
+\emph on
+identify
+\emph default
+ because a deterministic set of actions can be identified.
+ So upon inspection of the sequence of actions, say using printouts, I can
+ see where in the sequence the problems started to occur.
+\begin_inset Newline newline
+\end_inset
+
+This is related to predictable bugs, because having the same symptoms implies
+ predictability.
+ So the parser example can apply here.
+\end_layout
+
+\begin_layout Enumerate
+A bug producing 
+\series bold
+different symptoms
+\series default
+ is difficult to 
+\emph on
+identify
+\emph default
+ because the same actions repeated over and over may or may not reproduce
+ the bug.
+ 
+\begin_inset Newline newline
+\end_inset
+
+For example, a context switch bug.
+ We had this bug, unknowingly.
+ It only caused a problem once in a while, but each problem is always different.
+ All the code we had seems to break, arbitrarily.
+ It was extremely difficult identifying the context switch bug, because
+ of non-deterministic behaviour.
+ We even got our kernel to run for two minutes without seeing a problem.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -910,10 +2295,354 @@ Hard bugs
  
 \end_layout
 
+\begin_layout Standard
+Description of typical behaviour between instruction pair and kernel bug
+ occurrence and a subsequent crash.
+ 
+\end_layout
+
+\begin_layout Standard
+This is a bug that occurs only when:
+\end_layout
+
+\begin_layout Itemize
+it is between a pair of user instruction (during context switch), and
+\end_layout
+
+\begin_layout Itemize
+a hardware interrupt occurs between the pair.
+\end_layout
+
+\begin_layout Standard
+I will describe a bug that occurs when one user process interferes with
+ the control flow structure of another only when a hardware interrupt occurring
+ during their context switch.
+\end_layout
+
+\begin_layout Standard
+This is the setup
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This is a boiled down version of what our actual context switching bug was
+ in our kernel.
+ We were restoring the user's CPSR to the supervisor instead of the user.
+ And this was fine, until hardware interrupts were added (watchdog timer
+ preemptions).
+\end_layout
+
+\end_inset
+
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Quotes eld
+\end_inset
+
+Two such possible bugs were described in class.
+\begin_inset Quotes erd
+\end_inset
+
+ -- I actually don't remember this.
+ I apologize if my example is the same as the one in class.
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+Suppose the bug is in the context switch, where the CPSR is not saved properly.
+\end_layout
+
+\begin_layout Itemize
+There are two programs A and B.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+They have the same code.
+ 
+\end_layout
+
+\begin_layout Itemize
+They run forever to do arithmetic and checks it along.
+ 
+\end_layout
+
+\begin_layout Itemize
+Hence modifying their state register (CPSR)
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The CPSR contains condition code flags: N, Z, C, V from the 31:28 bits.
+ These store the result of ALU operations.
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+The programs themselves run normally without preemption.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+The hardware interrupt is by the watchdog timer, causing preemption to the
+ other program.
+\end_layout
+
+\begin_layout Standard
+Here is sequence of execution that would crash the user programs.
+\end_layout
+
+\begin_layout Enumerate
+Program A did some computation and stored its ALU result in the CPSR.
+\end_layout
+
+\begin_layout Enumerate
+Hardware interrupt from watchdog timer causes preemption context switch
+ into program B.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+CPSR of A was stored correctly onto its stack.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Program B did some computation and store its ALU result in the CPSR.
+\end_layout
+
+\begin_layout Enumerate
+Hardware interrupt from watchdog timer causes preemption context switch
+ into program A.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+CPSR of A is supposed to be restored correctly.
+ But it wasn't, due to bug.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Program A is now actually continuing on, using program B's CPSR result.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Program A check fails here.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection*
 2.c Link register bugs.
 \end_layout
 
+\begin_layout Standard
+There's 6 link registers, one for each of the 6 modes: User/System, FIQ,
+ IRQ, Supervisor, Abort, Undefined.
+ I am supposing the 3 registers refers to User, Supervisor, and IRQ hardware
+ interrupt (we do not use FIQ).
+ 
+\end_layout
+
+\begin_layout Standard
+The function of the link register is to store the return address when branch
+ and link operations are performed, calculated from the program counter.
+ 
+\end_layout
+
+\begin_layout Standard
+For each of the 3 link registers, I describe its function, where and when
+ I get it, and where and when I put it back:
+\end_layout
+
+\begin_layout Enumerate
+User link register 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+function is to track the current running user program.
+\end_layout
+
+\begin_layout Enumerate
+get it from user link register and put it on user's stack when going into
+ context switch.
+\end_layout
+
+\begin_layout Enumerate
+put it back to user lr (from user's stack) when coming out of context switch.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Supervisor link register 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+function is to store the kernel's link register.
+\end_layout
+
+\begin_layout Enumerate
+get it from the kernel stack when kernel becomes active.
+\end_layout
+
+\begin_layout Enumerate
+put it back to the kernel stack when going to user mode.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+IRQ link register 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Goes into kernel mode after a hardware interrupt, in my kernel.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+function is to store the user pc.
+\end_layout
+
+\begin_layout Enumerate
+get it from the IRQ register in IRQ mode, during IRQ interrupt handling.
+\end_layout
+
+\begin_layout Enumerate
+put it back to the user's stack, so that the kernel can use it to restore
+ the user task.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+There are three ways to pair up a set of three things.
+ For each possible pair, I explain the future execution of the program when
+ that pair of registers is interchanged.
+\end_layout
+
+\begin_layout Enumerate
+User/Supervisor pair
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\series bold
+Supervisor resumes execution of User's link register.
+
+\series default
+ This would work, because being in privileged mode, user mode code can definitel
+y be executed.
+ Of course, assuming the user's link register didn't contain garbage.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+User resumes execution of Supervisor's link register.
+
+\series default
+ which causes access violation, breaking the abstraction barrier.
+ Abort data
+\series bold
+ 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Abort data exception is a response by a memory system to an invalid data
+ access.
+ 
+\end_layout
+
+\end_inset
+
+
+\series default
+ is triggered.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Supervisor/IRQ pair
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\series bold
+Supervisor resumes execution of IRQ's link register.
+ 
+\series default
+This would work, because both are privileged modes.
+ In my kernel, it always goes from IRQ mode into Supervisor mode, and we
+ abuse this resumption of execution.
+ Of course, assuming the IRQ link register didn't contain garbage.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+IRQ resumes execution of Supervisor's link register.
+
+\series default
+ This would work as well, both are privileged modes.
+ Of course, assuming the Supervisor's link register didn't contain garbage.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+IRQ/User pair
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+I
+\series bold
+RQ resumes execution of User's link register.
+
+\series default
+ This would work, for the same reason why Supervisor can execute User's
+ link register.
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+User resumes execution of IRQ's link register
+\series default
+.
+ This would 
+\emph on
+not
+\emph default
+ work, for the same reason why User cannot execute Supervisor's link register
+ (access violation).
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 \begin_inset Newpage newpage
 \end_inset
@@ -931,7 +2660,7 @@ Question 5.
  Destroy()
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (i) List all the internal adjustments that the kernel must do to ensure
  consistency with the task never running again.
  
@@ -944,7 +2673,7 @@ The kernel must ensure the task is not run again, and recycle any resources
 \end_layout
 
 \begin_layout Standard
-Here is a list of the resouces a task uses.
+Here is a list of the resources a task uses.
 \end_layout
 
 \begin_layout Itemize
@@ -955,7 +2684,7 @@ Stack.
  
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (ii) How is Exit() is related to Destroy() and Suicide()?
 \end_layout
 
@@ -971,7 +2700,7 @@ Exit is similar to Destroy and Suicide because it is also a syscall that
  Suicide()
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (i) Describe when Suicide() could work and when it can’t.
 \end_layout
 
@@ -1008,7 +2737,7 @@ Example: does not work if task is a courier, doing only Send() calls.
 .
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (ii) Assuming Destroy() to be available how would Suicide() be implemented?
  
 \end_layout
@@ -1064,7 +2793,7 @@ Exit();
  Children
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (i) When is destroying the children is a good idea?
 \end_layout
 
@@ -1079,7 +2808,7 @@ If the children contains any references to the task that was destroyed,
 For example, a child task that replies to the parent with some computation
  result the parent had asked.
  This child should be destroyed, because it would be trying to reply to
- a non-existant task after its parent was destroyed.
+ a nonexistent task after its parent was destroyed.
  
 \end_layout
 
@@ -1096,7 +2825,7 @@ Suppose we use a static variable to keep track of the task id the child
  
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (ii) Give an example of a task configuration when destroying the children
  is not desirable.
  
@@ -1124,7 +2853,7 @@ For example, a task may be created and used as an in-memory-database, to
  it makes no sense to destroy this task simply because its parent was destroyed.
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (iii) Because your system has an upper limit on the number of live tasks,
  you can bound above the amount of time required to permanently inactivate
  a task and its children.
@@ -1225,7 +2954,7 @@ MaxTimeRequired=m(MaxDestroyTime+MaxMessagePassingOverhead)
  Resource reclamation
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (i) Some resource reclamation can be done by the kernel.
  What are the resources and how are they made available for future use?
  
@@ -1255,7 +2984,7 @@ The freed up resources can go into a queue, so to keep track of what resources
  
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (ii) If memory is to be zeroed, you probably don’t want the kernel doing
  that.
  How might it be done? 
@@ -1269,7 +2998,7 @@ Indeed having kernel zero (a possibly large chunk of) memory is undesirable
 \end_layout
 
 \begin_layout Standard
-A zeroing task can be created initally by the kernel and thus be invisible
+A zeroing task can be created initially by the kernel and thus be invisible
  to user tasks (or the first-user task can create it).
  Optionally, the idling task can be given the duty of zeroing, but this
  could be undesirable because of its low priority, because we might want
@@ -1283,14 +3012,14 @@ This zeroing task would be blocked and waiting for a message of what address
  
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Subsubsection*
 (iii) There are resources about which the kernel knows nothing, track reservatio
 ns for example.
  How might these resources be freed? 
 \end_layout
 
 \begin_layout Standard
-These resources could be kept in the stack of a seperate task, for the sole
+These resources could be kept in the stack of a separate task, for the sole
  purpose of acting as a simple in-memory database.
  Destroying the task is the equivalent of removing the resource.
  
