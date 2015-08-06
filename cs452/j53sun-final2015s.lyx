@@ -280,33 +280,27 @@ priority
 status collapsed
 
 \begin_layout Plain Layout
-
 For example, combining them: 
 \end_layout
 
 \begin_layout LyX-Code
-
 (state << TASK_STATE_OFFSET) | 
 \end_layout
 
 \begin_layout LyX-Code
-
 (priority << TASK_PRIORITY_OFFSET) | 
 \end_layout
 
 \begin_layout LyX-Code
-
 (id << TASK_ID_OFFSET).
  
 \end_layout
 
 \begin_layout Plain Layout
-
 And to access, for example, the task state: 
 \end_layout
 
 \begin_layout LyX-Code
-
 (TASK_STATE_MASK & task->state) >> TASK_STATE_OFFSET.
 \end_layout
 
@@ -504,8 +498,9 @@ draw only the relevant lines (of the 512 total lines) that were brought
 \end_layout
 
 \begin_layout Standard
-I trace the path of execution of what happens from the moment the kernel
- creates the FirstUserTask, to its activation.
+Generally, for this and subsequent questions, I trace the path of execution
+ of what happens from the moment the kernel creates the FirstUserTask, to
+ its activation.
  Then I figure out for each of the execution step, what would've been an
  access to the data cache.
 \end_layout
@@ -758,6 +753,74 @@ The task descriptor is 3 words, and a line of cache is 8 words.
 
 \begin_layout Subsubsection*
 1.b On the stack of the kernel 
+\end_layout
+
+\begin_layout Standard
+For this question, some assumptions on the implementation has to be made.
+ 
+\end_layout
+
+\begin_layout Itemize
+The kernel always pushes the most recent task descriptor on the top of its
+ stack.
+ So this means:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Context switching in on a user task A, task descriptor A always gets pushed
+ on the stack.
+\end_layout
+
+\begin_layout Itemize
+Context switching to another user task B, there is a scan down the kernel
+ stack, and the most recent task descriptor B is used.
+ That task descriptor used for B is not popped off.
+\end_layout
+
+\begin_layout Itemize
+Note: consequently these assumptions means the kernel's stack overflows
+ eventually if more than 1 user task runs.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+It makes no attempt to replace the already-existing task descriptor, if
+ any
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This setups for a great answer to (v) What happens to the long run, and
+ (vi) Overcoming the problem (of exploding the stack).
+ Whereby I introduce a method to scan down the stack and replace the existing
+ kernel.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+So because of how the question is structured, I will choose this dumb and
+ naive method.
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+The user task registers' are saved on the user task's stack.
+ It is not stored in the task descriptor.
+\end_layout
+
+\begin_layout Itemize
+The kernel schedules the top most task descriptor to be run next.
+\end_layout
+
+\begin_layout Itemize
+Destroying a task is achieved by scanning down the kernel stack and marking
+ any matching task descriptor as invalid.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -1032,10 +1095,20 @@ Kernel pushes FirstUserTask task descriptor on its stack.
 
 \begin_layout Enumerate
 Kernel re-enters to create the First task.
+ 
 \end_layout
 
+\begin_deeper
 \begin_layout Enumerate
-Immediately after the task has been created
+The kernel was already setup, so the only reason to go back to the kernel
+ is either to handle a syscall, or to context switch.
+ I'm going to assume the implementation doesn't leave things on the kernel
+ stack.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Immediately after, the First task has been created.
 \end_layout
 
 \begin_layout Standard
@@ -1197,7 +1270,9 @@ Immediately after the task has been created
 \end_layout
 
 \begin_layout Enumerate
-Activate First task, removing it from tip of kernel stack.
+Activate First task.
+ The kernel's stack still contains the First task descriptor because the
+ stack is never popped (see assumptions).
 \end_layout
 
 \begin_layout Standard
@@ -1225,9 +1300,42 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="1">
+<lyxtabular version="3" rows="7" columns="1">
 <features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: SIPP
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: stack pointer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+First: program counter
+\end_layout
+
+\end_inset
+</cell>
+</row>
 <row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
@@ -1667,41 +1775,126 @@ Other kernel things
 \end_layout
 
 \begin_layout Itemize
-When no more task creation occurs, the kernel stack stops growing in size.
+When 
+\series bold
+no more task creation occurs, the kernel stack keeps growing in size
+\series default
+ but in the 
+\series bold
+replace-if-same-task-descriptor strategy
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The replace-if-same-task-descriptor method: If upon coming in from a context
+ switch, the tip of the kernel stack has a matching task descriptor id,
+ then you replace the tip with a updated task descriptor.
+ This method will stop the kernel stack from growing larger, when there
+ is only one user task.
  
 \end_layout
 
+\begin_layout Plain Layout
+It's not much better, but I guess it's worth mentioning, given the type
+ of exam this is.
+ 
+\end_layout
+
+\end_inset
+
+, the stack stops growing in size
+\series default
+ when there is only one user task.
+ Because stack is not popped.
+\end_layout
+
+\begin_deeper
 \begin_layout Itemize
-When much task creation occurs, the stack keeps growing.
+
+\series bold
+Context switching in:
+\series default
+ always puts their task descriptor on the top of the stack
 \end_layout
 
 \begin_layout Itemize
-When much task creation and destruction occurs, the stack moves up and down
- a lot.
+
+\series bold
+Context switching out:
+\series default
+ scans down the kernel stack for the most recent task descriptor for that
+ task, and use that.
 \end_layout
 
+\end_deeper
+\begin_layout Itemize
+When 
+\series bold
+much task creation occurs, the stack keeps growing
+\series default
+.
+ Just faster.
+\end_layout
+
+\begin_layout Itemize
+When 
+\series bold
+much task creation and destruction occurs, the stack keeps growing
+\series default
+, a lot.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Destroying a task is made by scanning downward and marking it as invalid,
+ but not popped.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection*
 (vi) Can these problems be overcome?
 \end_layout
 
 \begin_layout Standard
-Yes.
- A table mapping task and their respective storage (which otherwise would've
+Yes, with these methods.
+\end_layout
+
+\begin_layout Enumerate
+Instead of a naive strategy of always pushing onto the stack, use a 
+\series bold
+find-and-replace strategy
+\series default
+.
+ That means, scan down the kernel stack for the matching task descriptor,
+ and update its content with the user task that is being context switched
+ out.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+This means on the kernel stack, all of the task descriptors are unique.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+A table mapping task and their respective storage (which otherwise would've
  been on the kernel's stack) can be set aside.
 \end_layout
 
-\begin_layout Itemize
-It can be in static space, pre-allocated by the compiler.
- This would mean it's not going to be on the kernel's stack.
- 
-\end_layout
-
-\begin_layout Itemize
-It can be on kernel's stack, then the kernel could use a chunk of space
- (from its stack).
+\begin_deeper
+\begin_layout Enumerate
+It can be on kernel's stack, then the kernel could use a preallocated chunk
+ of space (from its stack).
  Benefit would be the kernel's stack is not moving up and down.
 \end_layout
 
+\begin_layout Enumerate
+It can be in static space, pre-allocated by the compiler.
+ This would mean it's not going to be on the kernel's stack.
+ However, this solution is exactly 1.a, so it would not be acceptable.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection*
 1.c In my kernel
 \end_layout
@@ -2452,17 +2645,49 @@ Program A check fails here.
 \end_layout
 
 \begin_layout Standard
-There's 6 link registers, one for each of the 6 modes: User/System, FIQ,
- IRQ, Supervisor, Abort, Undefined.
- I am supposing the 3 registers refers to User, Supervisor, and IRQ hardware
- interrupt (we do not use FIQ).
+There's actually 6 link registers, one for each of the 6 modes
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Source: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.eecs.umich.edu/courses/eecs370/eecs370.w15/resources/materials/arm_inst.pd
+f
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+: User/System, FIQ, IRQ, Supervisor, Abort, Undefined.
  
+\end_layout
+
+\begin_layout Standard
+I am going to assume the 
+\series bold
+3 registers
+\series default
+ refers to User, Supervisor, and IRQ modes (we do not use FIQ).
+ 
+\end_layout
+
+\begin_layout Standard
+The Supervisor, and IRQ modes are both privileged, while User mode is not.
 \end_layout
 
 \begin_layout Standard
 The function of the link register is to store the return address when branch
  and link operations are performed, calculated from the program counter.
- 
+ It is also known as register 14 in the ARMv4 architecture.
 \end_layout
 
 \begin_layout Standard
@@ -2485,7 +2710,8 @@ get it from user link register and put it on user's stack when going into
 \end_layout
 
 \begin_layout Enumerate
-put it back to user lr (from user's stack) when coming out of context switch.
+put it back to user link register (from user's stack) when coming out of
+ context switch.
 \end_layout
 
 \end_deeper
@@ -2574,7 +2800,19 @@ status collapsed
 \begin_layout Plain Layout
 Abort data exception is a response by a memory system to an invalid data
  access.
- 
+ Source: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.embedded.com/design/prototyping-and-development/4006695/How-to-use-ARM-
+s-data-abort-exception
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -2997,12 +3235,16 @@ Indeed having kernel zero (a possibly large chunk of) memory is undesirable
  
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 A zeroing task can be created initially by the kernel and thus be invisible
  to user tasks (or the first-user task can create it).
- Optionally, the idling task can be given the duty of zeroing, but this
- could be undesirable because of its low priority, because we might want
- the zeroing to happen as soon as possible so that task can created faster.
+ 
+\end_layout
+
+\begin_layout Itemize
+Optionally, the idling task can be given the duty of zeroing, but this could
+ be undesirable because of its low priority, because we might want the zeroing
+ to happen as soon as possible so that task can created faster.
  
 \end_layout
 
