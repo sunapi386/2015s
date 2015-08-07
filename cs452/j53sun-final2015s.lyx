@@ -748,7 +748,7 @@ Each box represent a line of a cache, and each line contains 8 words.
 \begin_layout Standard
 The task descriptor is 3 words, and a line of cache is 8 words.
  At most two task descriptors can fit in one line, using 6 words.
- Using 
+ 
 \end_layout
 
 \begin_layout Subsubsection*
