@@ -1,0 +1,703 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{graphviz}
+
+\usepackage{lastpage}
+\usepackage[ddmmyyyy]{datetime}
+
+\fancyhf{} % clear existing head/footers
+\fancyhead[L]{CS 486}
+\fancyhead[C]{Project}
+\fancyhead[R]{j53sun \#20387090}
+
+\fancyfoot[L]{\fontsize{8}{8} \today: \currenttime}
+\fancyfoot[R]{\fontsize{8}{8} \thepage\ / \pageref{LastPage}}
+
+\makeatletter
+\let\ps@plain\ps@fancy   % Plain page style = fancy page style
+\makeatother
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CS486 Project
+\end_layout
+
+\begin_layout Author
+Jason Sun
+\end_layout
+
+\begin_layout Date
+August 10, 2015
+\end_layout
+
+\begin_layout Abstract
+In this paper, I look at building a character recommendation engine for
+ the computer game Dota 2.
+ I explore the a machine learning algorithms called sum-product networks
+ to solve the problem.
+\end_layout
+
+\begin_layout Abstract
+I discuss the modelling details for the machine learning algorithms I use.
+ I also provide insight into how future data collection and feature selection
+ can be done.
+\end_layout
+
+\begin_layout Abstract
+There are two main benefits to do this analysis.
+ First, it is a survey of machine learning algorithms applied to Dota 2
+ – in the process gaining insights into the algorithms.
+ Second, it can be a useful tool for the Dota 2 community.
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Dota 2 is a popular online real time strategy computer game made by Valve.
+ It is based off Dota, which was a custom map for the Warcraft 3 game by
+ Blizzard.
+ 
+\end_layout
+
+\begin_layout Standard
+There are many similar games (that can be called competitors), such as League
+ of Legends by Riot, and Heroes of the Storm by Blizzard, The recent Dota
+ 2 international competition 
+\emph on
+The International 5
+\emph default
+ had a prize pool totalling $18.4 million US dollars
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.dota2.com/international/compendium/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ Dota 2 has about 600 000 unique players per day
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://steamcharts.com/app/570
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ as of July 2015.
+ 
+\end_layout
+
+\begin_layout Standard
+This seems fits as a machine learning recommendation problem.
+ But it is challenging due to a large volume of the solution space.
+ With 110 heroes to choose and five heroes per team, this results in over
+ eight quadrillion possible team combinations.
+ 
+\end_layout
+
+\begin_layout Standard
+Recommending heroes using machine learning is challenging because it tries
+ to capture via raw data what professional players have developed a gut
+ instinct for through hundreds of thousands of hours of game time.
+\end_layout
+
+\begin_layout Subsection
+Game
+\end_layout
+
+\begin_layout Standard
+A game match consists of 10 players, each selecting a different 
+\series bold
+hero
+\series default
+ (character to play).
+ At the beginning of every match, this selection must be made within the
+ first 60 seconds
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Before one gets penalized and loses 2 
+\series bold
+gold
+\series default
+ (in game currency) per second
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Characters in the game
+\end_layout
+
+\begin_layout Standard
+Heroes come from a pool of different heroes, currently 110 out of 112 can
+ be played.
+ Once a player chooses a hero, no other player can select that hero for
+ the same match.
+ Heroes have a wide-range of characteristics and abilities that, combined
+ with the massive hero pool, make each match unique.
+ Heroes each have their strengths and vulnerabilities.
+ Generalizing to the real-world, an archer is good from attacking afar,
+ but not good in close range.
+ So a counter for an archer is to pick a character that can quickly close
+ the distance.
+\end_layout
+
+\begin_layout Subsection
+Character selection
+\end_layout
+
+\begin_layout Standard
+In choosing a hero, players must keep in mind the individual strengths and
+ weaknesses of each hero, but also the strengths and weaknesses of heroes
+ already chosen by other players.
+ 
+\end_layout
+
+\begin_layout Standard
+An effective hero pick is one that synergies with the heroes chosen by teammates
+, and both exploits the weaknesses and minimizes the strengths of the heroes
+ chosen by the opposing team.
+ 
+\end_layout
+
+\begin_layout Standard
+Well devised hero choices can give a team a large advantage before the match
+ even begins.
+ The goal of the project is to provide this recommendation by applying machine
+ learning to learn patterns from previous matches.
+\end_layout
+
+\begin_layout Subsection
+Recommendation goal
+\end_layout
+
+\begin_layout Standard
+The recommendation engine must answer the following question:
+\end_layout
+
+\begin_layout Quotation
+
+\series bold
+Recommend a few heroes that are often seen to be picked along side the current
+ selection of heroes.
+ 
+\end_layout
+
+\begin_layout Standard
+The current selection of heroes can be chosen by the enemy or by your team.
+ The recommendation engine provides a suggestion in a fashion similar to
+ completing a word of length 10, by suggesting some alphabet characters
+ commonly seen together with the provided input.
+ 
+\end_layout
+
+\begin_layout Subsection
+Sum-product network
+\end_layout
+
+\begin_layout Standard
+I intend to use a sum-product network (SPN) model for this recommendation
+ engine.
+ SPNs outperform other state-of-the-art deep architectures, according to
+ the SPN paper
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://turing.cs.washington.edu/papers/uai11-poon.pdf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Deep architecture to solve this problem seemed appropriate because recent
+ pattern recognition technologies such as voice recognition and image object
+ recognition have made significant improvements one the deep architectures
+ were integrated.
+\end_layout
+
+\begin_layout Section
+Related Work
+\end_layout
+
+\begin_layout Subsection
+Dotabuff
+\end_layout
+
+\begin_layout Standard
+Dotabuff
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.dotabuff.com
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ is a popular website for analyzing game matches.
+ Its analysis methods are proprietary, but it seems to uses Valve's web
+ API for recent games data mining, and possibly even download the game replays
+ (which are large files about 20-40 Mb), because some of the match data
+ is not available from the API alone.
+ This website allows the user to visualize statistics in an organized manner.
+ The website currently makes no effort to provide hero recommendations,
+ but can be helpful in verifying collected data.
+\end_layout
+
+\begin_layout Subsection
+Other recommender papers
+\end_layout
+
+\begin_layout Standard
+There are some papers I found that explored generally the same recommendation
+ problem, using different models.
+\end_layout
+
+\begin_layout Enumerate
+Paper that modelled this problem using the K-nearest neighbour model
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://cs229.stanford.edu/proj2013/PerryConley-HowDoesHeSawMeARecommendationEngine
+ForPickingHeroesInDota2.pdf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ They utilize a K-nearest neighbours approach with custom weight and distance
+ functions.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Another paper used logistic regression approach
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+target "http://cs229.stanford.edu/proj2014/Atish%20Agarwala,%20Michael%20Pearce,%20Learning%20Dota%202%20Team%20Compositions.pdf"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ They studied how the win rate depends on hero selection by performing logistic
+ regression with models that incorporate interactions between heroes.
+ Their models did not match the naive model without interactions which had
+ a 62% win prediction rate, suggesting cleaner data or better models are
+ needed.
+\end_layout
+
+\begin_layout Enumerate
+Finally a paper that used the random forest approach 
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.bth.se/fou/cuppsats.Nsf/all/0e9be67e75c84276c1257e04004d222d/$file/BTH20
+15Johansson.pdf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ An attempt was made to create a model using machine learning that can predict
+ the winning team of a Dota 2 game given partial data collected as the game
+ progressed.
+ A couple of different classifiers were tested, out of these Random Forest
+ was chosen to be studied more in depth.
+\end_layout
+
+\begin_layout Subsection
+Sum-product network papers
+\end_layout
+
+\begin_layout Standard
+The sum-product networks paper
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://turing.cs.washington.edu/papers/uai11-poon.pdf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ and their image completion problems
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://alchemy.cs.washington.edu/spn
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ served as references.
+ In particular, the image completion problems contained the complete set
+ of results and the SPN code.
+ 
+\end_layout
+
+\begin_layout Section
+Dataset
+\end_layout
+
+\begin_layout Standard
+I acquired through the Valve's API call
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+http://dev.dota2.com/showthread.php?t=47115
+\end_layout
+
+\end_inset
+
+ for 5000 most recent high level matches.
+ To use these you need a Steam API key
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+
+\family typewriter
+API Key: BAD3D130F4D06DB91EB99C1009E4A8BD
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The dataset satisfies the following requirements:
+\end_layout
+
+\begin_layout Itemize
+The game mode is 
+\emph on
+ranked captain's mode
+\emph default
+.
+ This game mode is where players play for rank, and generally take the game
+ more seriously.
+ Consequently, hero choices would be factored in, more so than other match
+ modes.
+\end_layout
+
+\begin_layout Itemize
+The skill level of the players is 
+\emph on
+very-high
+\emph default
+.
+ Utilizing only very-high skill level matches allows learning from best
+ players.
+ 
+\end_layout
+
+\begin_layout Itemize
+No 
+\emph on
+abandoned
+\emph default
+ games.
+ Players that leave the match before the game is completed affect the outcome
+ of the match.
+\end_layout
+
+\begin_layout Standard
+The data for each match is structured as JSON and includes which heroes
+ were chosen for each team.
+ The training set is 90% of the matches, and 10% for a test set.
+ 
+\end_layout
+
+\begin_layout Standard
+As there are 110 heroes, each game is one instance of 48 trillion possible
+ games 
+\begin_inset Formula $\binom{110}{10}$
+\end_inset
+
+.
+ With my limited number of most recent matches, it is a rough approximation
+ of how the hero mechanics work.
+\end_layout
+
+\begin_layout Section
+Modelling
+\end_layout
+
+\begin_layout Standard
+In this section I describe how I formulate the problem as a 
+\series bold
+sum-product network
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+
+\series bold
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://turing.cs.washington.edu/papers/uai11-poon.pdf
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\series default
+ problem.
+ The goal is to learn what heroes are commonly picked along side with heroes
+ currently seen.
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+learning process
+\series default
+ is as follows:
+\end_layout
+
+\begin_layout Enumerate
+Create a feature vector representing a match.
+\end_layout
+
+\begin_layout Enumerate
+Try to complete the match 
+\end_layout
+
+\begin_layout Standard
+The 
+\series bold
+testing process
+\series default
+ is to provide a set of heroes that are commonly seen along with what heroes
+ are currently selected.
+\end_layout
+
+\begin_layout Standard
+Note this section is incomplete.
+\end_layout
+
+\begin_layout Section
+Experiments
+\end_layout
+
+\begin_layout Standard
+My intent was to use the SPN code that was used for image completion, but
+ I have not figured out how to formulate the recommender as a SPN problem.
+ 
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Standard
+In this paper I try to build a hero recommendation engine by providing a
+ set of heroes that are commonly seen along with heroes currently selected.
+ I have not achieved my goal.
+ 
+\end_layout
+
+\begin_layout Section
+Future Work
+\end_layout
+
+\begin_layout Itemize
+Perhaps different modelling methods could be used, such as bag of words.
+ 
+\end_layout
+
+\begin_layout Itemize
+The recommendation engine can be hosted on a website, so that the user can
+ get suggestions by entering what heroes are currently seen, choosing the
+ desired hero from a list of auto-complete suggestions.
+\end_layout
+
+\end_body
+\end_document
