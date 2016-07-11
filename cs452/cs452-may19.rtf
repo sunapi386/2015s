@@ -1,0 +1,23 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1347\cocoasubrtf570
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f0\fs24 \cf0 Is worth using MMU? Not particularly interesting for dealing with virtual memory due to the nature of the thing we are building. It is useful to use the MMU to protect some parts of your program from other program. The MMU we use knows about big and small segments (two level). To break your memory into 1 mb chunks and protect them from one another is a very reasonable thing to do. Using small chunks add up complexity. The MMU table are in low memory. When MMU has been reset, for every memory reference you make, it requires two references.Trying to use the MMU does not gain satisfactory performance. Too slow.\
+\
+You don\'92t want the Context Switch getting robust only on the weekend. \
+\
+swi \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 cpsr goes into the spsr.\
+move pc,lr // move can only be done in a privileged state. it does: takes the link register in svc and and puts it into the pc of the user. also takes the spsr and puts it back into user\'92s cpsr. \
+ \
+\
+save fp, sp, lr\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+just before leaving, restore fp, sp, lr\
+\
+\
+we don\'92t want to talk through global variables. }

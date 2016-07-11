@@ -1,0 +1,45 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1347\cocoasubrtf570
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww16600\viewh19500\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f0\fs24 \cf0 \
+Software Interrupt SWI\
+If not done atomically then other programs end up using wrong reference.\
+\
+[a,b,c,d]\
+[e,f,g,h]\
+\
+the c place has instruction to\
+mov pc, pc+018 // what that means is this particular location \
+\
+The an extra value in the link register needs to be saved. \
+\
+Save the three link registers, in distinct places. Don\'92t confuse them.\
+\
+Stack pointer into the task descriptor\
+\
+GIT\
+such a troll\
+\
+\
+SCHEDULING\
+This code run every time the kernel wakes up, so performance is bad. There\'92s a queue for each priority. We tend to put code that responds to interrupts here.\
+\
+ The high priorities are almost always empty. Because each time you respond to interrupt, there\'92s a cascade of instructions that need to become ready.\
+\
+Medium priority tasks are waiting for other tasks. \
+\
+Low are waiting for clients and workers.\
+\
+All of the ready queue being empty, then we have nothing to do. \
+\
+Q: How to find out the highest priority task in ready queue without scanning the list? \
+A: Keep a bit mask set for each of the queue. Suppose we put the highest priority in the lowest order bit\
+0000 0000\
+Where is the first bit set? The first bit set is the right index into the queue. You can try using v&(1-v). You then have to take the log (base 2) constant time. This is widely known bit manipulation trick. Sometimes in V5 that there are transistors dedicated to it.\
+\
+You can get head and tail easily and save a few instructions. 2/3 of execution time is going to be done by the kernel. This stuff gets run every time the kernel is run.  \
+\
+0 down, 0 being the highest priority. }

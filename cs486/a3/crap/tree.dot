@@ -1,0 +1,30 @@
+digraph Tree {
+    node [fontsize=10, shape=box];
+    node0 [label="god"];
+    node1 [label="graphics"];
+    node2 [label="that"];
+    node3 [label="image"];
+    node4 [label="that"];
+    node5 [label="program"];
+    node6 [label="wrote"];
+    node7 [label="people"];
+    node8 [label="religious"];
+    node9 [label="bible"];
+    node10 [label="comp"];
+    node11 [label="atheist"];
+    node12 [label="keith"];
+    node13 [label="an"];
+    node14 [label="he"];
+    node15 [label="uchicago"];
+    node16 [label="edges"];
+    node17 [label="slow"];
+    node18 [label="god"];
+    node19 [label="keith"];
+    node20 [label="windows"];
+    node21 [label="murder"];
+    node0 -> node2;
+    node2 -> node9;
+    node9 -> node11;
+    node11 -> node12;
+}
+
